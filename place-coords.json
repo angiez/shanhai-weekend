@@ -1,0 +1,962 @@
+{
+  "stanley": {
+    "lat": 49.3020684,
+    "lng": -123.1413263,
+    "source": "nominatim",
+    "osm": "way/37063023",
+    "label": "Stanley Park, West End, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Stanley Park, Vancouver, British Columbia, Canada"
+  },
+  "aquarium": {
+    "lat": 49.3005177,
+    "lng": -123.1312214,
+    "source": "nominatim",
+    "osm": "way/58305151",
+    "label": "Vancouver Aquarium, 845, Avison Way, Vancouver, Metro Vancouver Regional District, British Columbia, V6G 3E2, Canada",
+    "query": "Vancouver Aquarium, Vancouver, British Columbia, Canada"
+  },
+  "science-world": {
+    "lat": 49.2734536,
+    "lng": -123.1036739,
+    "source": "nominatim",
+    "osm": "way/37084312",
+    "label": "Science World, 1455, Quebec Street, Downtown, Vancouver, Metro Vancouver Regional District, British Columbia, V6A 3Z7, Canada",
+    "query": "Science World, Vancouver, British Columbia, Canada"
+  },
+  "granville": {
+    "lat": 49.270713,
+    "lng": -123.1342858,
+    "source": "nominatim",
+    "osm": "relation/11670779",
+    "label": "Granville Island, Fairview, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Granville Island, Vancouver, British Columbia, Canada"
+  },
+  "vandusen": {
+    "lat": 49.2396191,
+    "lng": -123.1325932,
+    "source": "nominatim",
+    "osm": "way/316008597",
+    "label": "VanDusen Botanical Garden, 5251, Shaughnessy, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "VanDusen Botanical Garden, Vancouver, British Columbia, Canada"
+  },
+  "qepark": {
+    "lat": 49.2410336,
+    "lng": -123.1119593,
+    "source": "nominatim",
+    "osm": "way/23393985",
+    "label": "Queen Elizabeth Park, Riley Park, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Queen Elizabeth Park, Vancouver, British Columbia, Canada"
+  },
+  "sun-yat-sen": {
+    "lat": 49.2795609,
+    "lng": -123.1039396,
+    "source": "nominatim",
+    "osm": "way/456158488",
+    "label": "Doctor Sun Yat-Sen Classical Chinese Garden, 578, Downtown, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Dr. Sun Yat-Sen Classical Chinese Garden, Vancouver, British Columbia, Canada"
+  },
+  "chinatown": {
+    "lat": 49.2803671,
+    "lng": -123.1010541,
+    "source": "nominatim",
+    "osm": "relation/11008796",
+    "label": "Chinatown, Downtown, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Chinatown, Vancouver, British Columbia, Canada"
+  },
+  "gastown": {
+    "lat": 49.2836567,
+    "lng": -123.1062358,
+    "source": "nominatim",
+    "osm": "node/704270667",
+    "label": "Gastown, Downtown, Vancouver, Metro Vancouver Regional District, British Columbia, V6B 2K7, Canada",
+    "query": "Gastown, Vancouver, British Columbia, Canada"
+  },
+  "moa": {
+    "lat": 49.2694691,
+    "lng": -123.2594145,
+    "source": "nominatim",
+    "osm": "way/33176178",
+    "label": "Museum of Anthropology, 6393, Northwest Marine Drive, University of British Columbia Vancouver, University of British Columbia, Vancouver, Metro Vancouver Regional District, British Columbia, V6T 1Z2, Canada",
+    "query": "Museum of Anthropology, Vancouver, British Columbia, Canada"
+  },
+  "beaty": {
+    "lat": 49.2632442,
+    "lng": -123.2509508,
+    "source": "nominatim",
+    "osm": "way/36835375",
+    "label": "Beaty Biodiversity Museum, 2212, Main Mall, University of British Columbia Vancouver, University of British Columbia, Electoral Area A, Metro Vancouver Regional District, British Columbia, V6T 1Z4, Canada",
+    "query": "Beaty Biodiversity Museum, Vancouver, British Columbia, Canada"
+  },
+  "space-centre": {
+    "lat": 49.2763502,
+    "lng": -123.1449814,
+    "source": "nominatim",
+    "osm": "node/4215844490",
+    "label": "H. R. MacMillan Space Centre, 1100, Chestnut Street, Kitsilano, Vancouver, Metro Vancouver Regional District, British Columbia, V6J 3J9, Canada",
+    "query": "H.R. MacMillan Space Centre, Vancouver, British Columbia, Canada"
+  },
+  "english-bay": {
+    "lat": 49.2863644,
+    "lng": -123.1642292,
+    "source": "nominatim",
+    "osm": "relation/13373123",
+    "label": "English Bay, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "English Bay, Vancouver, British Columbia, Canada"
+  },
+  "kits": {
+    "lat": 49.2756531,
+    "lng": -123.1537326,
+    "source": "nominatim",
+    "osm": "way/86339711",
+    "label": "Kitsilano Beach, Kitsilano, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Kitsilano Beach, Vancouver, British Columbia, Canada"
+  },
+  "pacific-spirit": {
+    "lat": 49.2574846,
+    "lng": -123.2173026,
+    "source": "nominatim",
+    "osm": "relation/11683817",
+    "label": "Pacific Spirit Regional Park, Dunbar-Southlands, Electoral Area A, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Pacific Spirit Regional Park, Vancouver, British Columbia, Canada"
+  },
+  "flyover": {
+    "lat": 49.2891958,
+    "lng": -123.110351,
+    "source": "nominatim",
+    "osm": "node/4087855383",
+    "label": "FlyOver Canada, 999, Canada Place, Financial District, Downtown, Vancouver, Metro Vancouver Regional District, British Columbia, V6C 3E1, Canada",
+    "query": "FlyOver Canada, Vancouver, British Columbia, Canada"
+  },
+  "lookout": {
+    "lat": 49.2846114,
+    "lng": -123.112316,
+    "source": "nominatim",
+    "osm": "node/889550078",
+    "label": "Harbour Centre Lookout Tower, 555, West Hastings Street, Financial District, Downtown, Vancouver, Metro Vancouver Regional District, British Columbia, V6B 1L6, Canada",
+    "query": "Vancouver Lookout, Vancouver, British Columbia, Canada"
+  },
+  "playland": {
+    "lat": 49.2827491,
+    "lng": -123.0363988,
+    "source": "nominatim",
+    "osm": "relation/21366080",
+    "label": "Playland, Miller Drive, Hastings-Sunrise, Vancouver, Metro Vancouver Regional District, British Columbia, V5K 3N8, Canada",
+    "query": "Playland, Vancouver, British Columbia, Canada"
+  },
+  "commercial": {
+    "lat": 49.2667274,
+    "lng": -123.0696925,
+    "source": "nominatim",
+    "osm": "way/292127607",
+    "label": "Commercial Drive, Little Italy, Grandview-Woodland, Vancouver, Metro Vancouver Regional District, British Columbia, V5N 4B1, Canada",
+    "query": "Commercial Drive, Vancouver, British Columbia, Canada"
+  },
+  "garry": {
+    "lat": 49.1256003,
+    "lng": -123.196131,
+    "source": "nominatim",
+    "osm": "way/256257129",
+    "label": "Garry Point Park, Steveston, Richmond, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Garry Point Park, Richmond, British Columbia, Canada"
+  },
+  "steveston": {
+    "lat": 49.1252234,
+    "lng": -123.1836434,
+    "source": "nominatim",
+    "osm": "node/12520139945",
+    "label": "Steveston Village, Steveston, Richmond, Metro Vancouver Regional District, British Columbia, V7E 3A4, Canada",
+    "query": "Steveston Village, Richmond, British Columbia, Canada"
+  },
+  "cannery": {
+    "lat": 49.1247253,
+    "lng": -123.1869461,
+    "source": "nominatim",
+    "osm": "way/107134311",
+    "label": "Gulf of Georgia Cannery National Historic Site, 12138, 4th Avenue, Steveston, Richmond, Metro Vancouver Regional District, British Columbia, V7E 3J1, Canada",
+    "query": "Gulf of Georgia Cannery, Richmond, British Columbia, Canada"
+  },
+  "britannia": {
+    "lat": 49.1208454,
+    "lng": -123.1701983,
+    "source": "nominatim",
+    "osm": "relation/13683366",
+    "label": "Britannia Shipyards National Historic Site, Steveston, Richmond, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Britannia Shipyards, Richmond, British Columbia, Canada"
+  },
+  "temple": {
+    "lat": 49.1331685,
+    "lng": -123.1240078,
+    "source": "nominatim",
+    "osm": "relation/6744638",
+    "label": "International Buddhist Temple, 9160, Steveston Highway, Broadmoor, Richmond, Metro Vancouver Regional District, British Columbia, V7A 2W5, Canada",
+    "query": "International Buddhist Temple, Richmond, British Columbia, Canada"
+  },
+  "night-market": {
+    "lat": 49.1937839,
+    "lng": -123.1335832,
+    "source": "nominatim",
+    "osm": "node/4238209891",
+    "label": "Richmond Night Market, 8351, River Road, Bridgeport Village, City Centre, Richmond, Metro Vancouver Regional District, British Columbia, V6X 1Y4, Canada",
+    "query": "Richmond Night Market, Richmond, British Columbia, Canada"
+  },
+  "iona": {
+    "lat": 49.2191557,
+    "lng": -123.2146207,
+    "source": "nominatim",
+    "osm": "way/1186031301",
+    "label": "Iona Beach, Sea Island, Richmond, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Iona Beach, Richmond, British Columbia, Canada"
+  },
+  "richmond-nature": {
+    "lat": 49.1734849,
+    "lng": -123.0972474,
+    "source": "nominatim",
+    "osm": "way/32058013",
+    "label": "Richmond Nature Park, 11851, East Cambie, Richmond, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Richmond Nature Park, Richmond, British Columbia, Canada"
+  },
+  "oval": {
+    "lat": 49.174693,
+    "lng": -123.1516757,
+    "source": "nominatim",
+    "osm": "way/49797023",
+    "label": "Richmond Olympic Oval, 6111, River Road, Oval Village, City Centre, Richmond, Metro Vancouver Regional District, British Columbia, V7C 0A2, Canada",
+    "query": "Richmond Olympic Oval, Richmond, British Columbia, Canada"
+  },
+  "terra-nova": {
+    "lat": 49.1728672,
+    "lng": -123.196151,
+    "source": "nominatim",
+    "osm": "way/253933791",
+    "label": "Terra Nova Rural Park, Thompson, Richmond, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Terra Nova Rural Park, Richmond, British Columbia, Canada"
+  },
+  "dyke": {
+    "lat": 49.1505512,
+    "lng": -123.1955387,
+    "source": "nominatim",
+    "osm": "way/1414965761",
+    "label": "West Dyke Trail, Seafair, Richmond, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "West Dyke Trail, Richmond, British Columbia, Canada"
+  },
+  "aberdeen": {
+    "lat": 49.1838165,
+    "lng": -123.1337771,
+    "source": "nominatim",
+    "osm": "way/39274707",
+    "label": "Aberdeen Centre, 4151, Hazelbridge Way, Aberdeen Village, City Centre, Richmond, Metro Vancouver Regional District, British Columbia, V6X 4J7, Canada",
+    "query": "Aberdeen Centre, Richmond, British Columbia, Canada"
+  },
+  "bvm": {
+    "lat": 49.2399243,
+    "lng": -122.9668836,
+    "source": "nominatim",
+    "osm": "way/977129976",
+    "label": "Burnaby Village Museum, 6501, Deer Lake Avenue, Deer Lake, Burnaby, Metro Vancouver Regional District, British Columbia, V5E 2S9, Canada",
+    "query": "Burnaby Village Museum, Burnaby, British Columbia, Canada"
+  },
+  "deerlake": {
+    "lat": 49.2353111,
+    "lng": -122.9763674,
+    "source": "nominatim",
+    "osm": "relation/17683531",
+    "label": "Deer Lake Park, Deer Lake, Burnaby, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Deer Lake Park, Burnaby, British Columbia, Canada"
+  },
+  "burnabylake": {
+    "lat": 49.2449078,
+    "lng": -122.9534569,
+    "source": "nominatim",
+    "osm": "relation/2392999",
+    "label": "Burnaby Lake, Central Valley, Burnaby, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Burnaby Lake, Burnaby, British Columbia, Canada"
+  },
+  "central-park": {
+    "lat": 49.227573,
+    "lng": -123.0180725,
+    "source": "nominatim",
+    "osm": "way/23165846",
+    "label": "Central Park, Metrotown, Burnaby, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Central Park, Burnaby, British Columbia, Canada"
+  },
+  "metrotown": {
+    "lat": 49.2264338,
+    "lng": -123.0011791,
+    "source": "nominatim",
+    "osm": "relation/7395531",
+    "label": "Metropolis at Metrotown, 4700, Kingsway, Metrotown, Burnaby, Metro Vancouver Regional District, British Columbia, V5H 4N2, Canada",
+    "query": "Metropolis at Metrotown, Burnaby, British Columbia, Canada"
+  },
+  "barnet": {
+    "lat": 49.2887411,
+    "lng": -122.9506156,
+    "source": "nominatim",
+    "osm": "way/42166316",
+    "label": "Barnet Marine Park, Lochdale, Burnaby, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Barnet Marine Park, Burnaby, British Columbia, Canada"
+  },
+  "sfu": {
+    "lat": 49.2793412,
+    "lng": -122.908708,
+    "source": "nominatim",
+    "osm": "node/4695944242",
+    "label": "Burnaby Mountain, Burnaby, Metro Vancouver Regional District, British Columbia, V5A 4X6, Canada",
+    "query": "Burnaby Mountain, Burnaby, British Columbia, Canada"
+  },
+  "nikkei": {
+    "lat": 49.2175479,
+    "lng": -122.9643957,
+    "source": "nominatim",
+    "osm": "way/466225887",
+    "label": "Nikkei National Museum & Cultural Centre, 6688, Southoaks Crescent, Edmonds, Burnaby, Metro Vancouver Regional District, British Columbia, V5E 1E4, Canada",
+    "query": "Nikkei National Museum, Burnaby, British Columbia, Canada"
+  },
+  "confederation": {
+    "lat": 49.2867036,
+    "lng": -122.9999374,
+    "source": "nominatim",
+    "osm": "way/26731970",
+    "label": "Confederation Park, Burnaby, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Confederation Park, Burnaby, British Columbia, Canada"
+  },
+  "bear-creek": {
+    "lat": 49.1590982,
+    "lng": -122.8401383,
+    "source": "nominatim",
+    "osm": "way/96279325",
+    "label": "Bear Creek Park, 13750, Whalley, Surrey, Metro Vancouver Regional District, British Columbia, V3W 3L1, Canada",
+    "query": "Bear Creek Park, Surrey, British Columbia, Canada"
+  },
+  "crescent": {
+    "lat": 49.0557794,
+    "lng": -122.8842581,
+    "source": "nominatim",
+    "osm": "node/276256318",
+    "label": "Crescent Beach, South Surrey, Surrey, Metro Vancouver Regional District, British Columbia, V4A 2Z8, Canada",
+    "query": "Crescent Beach, Surrey, British Columbia, Canada"
+  },
+  "tynehead": {
+    "lat": 49.1824515,
+    "lng": -122.7586812,
+    "source": "nominatim",
+    "osm": "way/109819343",
+    "label": "Tynehead Regional Park, Guildford, Surrey, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Tynehead Regional Park, Surrey, British Columbia, Canada"
+  },
+  "redwood": {
+    "lat": 49.0348405,
+    "lng": -122.7287621,
+    "source": "nominatim",
+    "osm": "way/96904709",
+    "label": "Redwood Park, Hazelmere, South Surrey, Surrey, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Redwood Park, Surrey, British Columbia, Canada"
+  },
+  "stewart": {
+    "lat": 49.0646467,
+    "lng": -122.846658,
+    "source": "nominatim",
+    "osm": "relation/1386796",
+    "label": "Elgin Heritage Park, Elgin, South Surrey, Surrey, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Elgin Heritage Park, Surrey, British Columbia, Canada"
+  },
+  "green-timbers": {
+    "lat": 49.1802879,
+    "lng": -122.8187399,
+    "source": "nominatim",
+    "osm": "relation/17815872",
+    "label": "Green Timbers Urban Forest, Whalley, Surrey, Metro Vancouver Regional District, British Columbia, V3T 0J2, Canada",
+    "query": "Green Timbers Urban Forest, Surrey, British Columbia, Canada"
+  },
+  "peace-arch": {
+    "lat": 49.0029581,
+    "lng": -122.7564454,
+    "source": "nominatim",
+    "osm": "relation/9506295",
+    "label": "Peace Arch Park, Douglas, South Surrey, Surrey, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Peace Arch Park, Surrey, British Columbia, Canada"
+  },
+  "whiterock-pier": {
+    "lat": 49.0188533,
+    "lng": -122.8057096,
+    "source": "nominatim",
+    "osm": "way/661565271",
+    "label": "White Rock Pier, West Beach, White Rock, Metro Vancouver Regional District, British Columbia, V4B 1C5, Canada",
+    "query": "White Rock Pier, White Rock, British Columbia, Canada"
+  },
+  "whiterock-museum": {
+    "lat": 49.0217054,
+    "lng": -122.8074331,
+    "source": "nominatim",
+    "osm": "way/354703161",
+    "label": "White Rock Museum & Archives, Marine Drive, West Beach, White Rock, Metro Vancouver Regional District, British Columbia, V4B 1C5, Canada",
+    "query": "White Rock Museum, White Rock, British Columbia, Canada"
+  },
+  "reifel": {
+    "lat": 49.1029029,
+    "lng": -123.1898051,
+    "source": "nominatim",
+    "osm": "relation/20657271",
+    "label": "George C. Reifel Migratory Bird Sanctuary, Delta, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Reifel Bird Sanctuary, Delta, British Columbia, Canada"
+  },
+  "boundary": {
+    "lat": 49.018721,
+    "lng": -123.0412651,
+    "source": "nominatim",
+    "osm": "relation/20270447",
+    "label": "Centennial Beach, Tsawwassen, Delta, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Centennial Beach, Delta, British Columbia, Canada"
+  },
+  "deas": {
+    "lat": 49.1213699,
+    "lng": -123.0648883,
+    "source": "nominatim",
+    "osm": "way/24743098",
+    "label": "Deas Island Regional Park, Delta, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Deas Island, Delta, British Columbia, Canada"
+  },
+  "ladner": {
+    "lat": 49.0897595,
+    "lng": -123.0865506,
+    "source": "nominatim",
+    "osm": "way/1105362037",
+    "label": "Ladner Village Community Garden, Ladner, Delta, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Ladner Village, Delta, British Columbia, Canada"
+  },
+  "capilano": {
+    "lat": 49.3429014,
+    "lng": -123.1151049,
+    "source": "nominatim",
+    "osm": "way/168949344",
+    "label": "Capilano Suspension Bridge, 3735, Capilano, Edgemont Village, District of North Vancouver, Metro Vancouver Regional District, British Columbia, V7R 1T5, Canada",
+    "query": "Capilano Suspension Bridge, North Vancouver, British Columbia, Canada"
+  },
+  "lynn": {
+    "lat": 49.3432812,
+    "lng": -123.0187015,
+    "source": "nominatim",
+    "osm": "node/1222586021",
+    "label": "Lynn Canyon Café, 3690, Park Road, Lynn Valley, North Vancouver, Metro Vancouver Regional District, British Columbia, V7J 1Z1, Canada",
+    "query": "Lynn Canyon, North Vancouver, British Columbia, Canada"
+  },
+  "grouse": {
+    "lat": 49.3794719,
+    "lng": -123.0767805,
+    "source": "nominatim",
+    "osm": "relation/21277926",
+    "label": "Grouse Mountain, District of North Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Grouse Mountain, North Vancouver, British Columbia, Canada"
+  },
+  "cleveland": {
+    "lat": 49.3601588,
+    "lng": -123.1105177,
+    "source": "nominatim",
+    "osm": "way/55478075",
+    "label": "Cleveland Dam, Upper Capilano, District of North Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Cleveland Dam, North Vancouver, British Columbia, Canada"
+  },
+  "deepcove": {
+    "lat": 49.3287096,
+    "lng": -122.9427478,
+    "source": "nominatim",
+    "osm": "relation/8330420",
+    "label": "Deep Cove, District of North Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Deep Cove, North Vancouver, British Columbia, Canada"
+  },
+  "quarry": {
+    "lat": 49.3356762,
+    "lng": -122.9385735,
+    "source": "nominatim",
+    "osm": "way/367039704",
+    "label": "Quarry Rock Access Road, Deep Cove, District of North Vancouver, Metro Vancouver Regional District, British Columbia, V7G 1X4, Canada",
+    "query": "Quarry Rock, North Vancouver, British Columbia, Canada"
+  },
+  "maplewood": {
+    "lat": 49.3088041,
+    "lng": -123.0192814,
+    "source": "nominatim",
+    "osm": "way/261318457",
+    "label": "Maplewood Farm, Maplewood, District of North Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Maplewood Farm, North Vancouver, British Columbia, Canada"
+  },
+  "lonsdale": {
+    "lat": 49.3095403,
+    "lng": -123.0839179,
+    "source": "nominatim",
+    "osm": "node/425158504",
+    "label": "Lonsdale Quay, 2, Chesterfield Place, The Shipyards, Lower Lonsdale, North Vancouver, Metro Vancouver Regional District, British Columbia, V7M 3K3, Canada",
+    "query": "Lonsdale Quay, North Vancouver, British Columbia, Canada"
+  },
+  "seymour": {
+    "lat": 49.3932052,
+    "lng": -122.9444935,
+    "source": "nominatim",
+    "osm": "node/256744311",
+    "label": "Mount Seymour, District of North Vancouver, Metro Vancouver Regional District, British Columbia, V7G 1L3, Canada",
+    "query": "Mount Seymour, North Vancouver, British Columbia, Canada"
+  },
+  "rice-lake": {
+    "lat": 49.3567106,
+    "lng": -123.0131249,
+    "source": "nominatim",
+    "osm": "way/23489692",
+    "label": "Rice Lake, Seymour Valley Trail, Lynn Valley, District of North Vancouver, Metro Vancouver Regional District, British Columbia, V7K 2T1, Canada",
+    "query": "Rice Lake, North Vancouver, British Columbia, Canada"
+  },
+  "cates": {
+    "lat": 49.3030845,
+    "lng": -122.9571609,
+    "source": "nominatim",
+    "osm": "relation/8330417",
+    "label": "Cates Park, District of North Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Cates Park, North Vancouver, British Columbia, Canada"
+  },
+  "lighthouse": {
+    "lat": 49.3343388,
+    "lng": -123.2614463,
+    "source": "nominatim",
+    "osm": "relation/8314570",
+    "label": "Lighthouse Park, 4902, Eagle Harbour, West Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Lighthouse Park, West Vancouver, British Columbia, Canada"
+  },
+  "whytecliff": {
+    "lat": 49.3740009,
+    "lng": -123.2873817,
+    "source": "nominatim",
+    "osm": "relation/12567346",
+    "label": "Whytecliff Park, Horseshoe Bay, West Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Whytecliff Park, West Vancouver, British Columbia, Canada"
+  },
+  "cypress": {
+    "lat": 49.3976802,
+    "lng": -123.2011443,
+    "source": "nominatim",
+    "osm": "relation/15317924",
+    "label": "Cypress Mountain, West Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Cypress Mountain, West Vancouver, British Columbia, Canada"
+  },
+  "horseshoe": {
+    "lat": 49.3744409,
+    "lng": -123.273919,
+    "source": "nominatim",
+    "osm": "node/3928036719",
+    "label": "Horseshoe Bay, West Vancouver, Metro Vancouver Regional District, British Columbia, V7W 2G9, Canada",
+    "query": "Horseshoe Bay, West Vancouver, British Columbia, Canada"
+  },
+  "whyte-lake": {
+    "lat": 49.3760642,
+    "lng": -123.2592506,
+    "source": "nominatim",
+    "osm": "way/328693300",
+    "label": "Whyte Lake, Horseshoe Bay, West Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Whyte Lake, West Vancouver, British Columbia, Canada"
+  },
+  "lafarge": {
+    "lat": 49.2868448,
+    "lng": -122.7887286,
+    "source": "nominatim",
+    "osm": "way/274711572",
+    "label": "Lafarge Lake, Trevor Wingrove Way, River Springs, Coquitlam, Metro Vancouver Regional District, British Columbia, V3B 7S4, Canada",
+    "query": "Lafarge Lake, Coquitlam, British Columbia, Canada"
+  },
+  "mundy": {
+    "lat": 49.2565184,
+    "lng": -122.8256157,
+    "source": "nominatim",
+    "osm": "way/1004996176",
+    "label": "Mundy Park, River Heights, Coquitlam, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Mundy Park, Coquitlam, British Columbia, Canada"
+  },
+  "minnekhada": {
+    "lat": 49.3018537,
+    "lng": -122.6976615,
+    "source": "nominatim",
+    "osm": "relation/21109172",
+    "label": "Minnekhada Regional Park, Coquitlam, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Minnekhada Regional Park, Coquitlam, British Columbia, Canada"
+  },
+  "colony": {
+    "lat": 49.2359493,
+    "lng": -122.811298,
+    "source": "nominatim",
+    "osm": "way/35483762",
+    "label": "Colony Farm Road, Dartmoor, Coquitlam, Metro Vancouver Regional District, British Columbia, V3K 5Z9, Canada",
+    "query": "Colony Farm, Coquitlam, British Columbia, Canada"
+  },
+  "crunch": {
+    "lat": 49.2813473,
+    "lng": -122.8146128,
+    "source": "nominatim",
+    "osm": "way/82804052",
+    "label": "Coquitlam Crunch Trail, Cassin, Coquitlam, Metro Vancouver Regional District, British Columbia, V3E 1K9, Canada",
+    "query": "Coquitlam Crunch, Coquitlam, British Columbia, Canada"
+  },
+  "rocky": {
+    "lat": 49.2803886,
+    "lng": -122.8494817,
+    "source": "nominatim",
+    "osm": "relation/7122236",
+    "label": "Rocky Point Park, Pleasantside, Port Moody, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Rocky Point Park, Port Moody, British Columbia, Canada"
+  },
+  "belcarra": {
+    "lat": 49.3091193,
+    "lng": -122.9110498,
+    "source": "nominatim",
+    "osm": "relation/14558710",
+    "label": "Belcarra Regional Park, Port Moody, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Belcarra Regional Park, Port Moody, British Columbia, Canada"
+  },
+  "buntzen": {
+    "lat": 49.3477718,
+    "lng": -122.8589275,
+    "source": "nominatim",
+    "osm": "way/1227260282",
+    "label": "Buntzen Lake Recreation Area, Anmore, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Buntzen Lake, Port Moody, British Columbia, Canada"
+  },
+  "sasamat": {
+    "lat": 49.3198683,
+    "lng": -122.8890768,
+    "source": "nominatim",
+    "osm": "way/34387259",
+    "label": "Sasamat Lake, Sugar Mountain Trail, Port Moody, Metro Vancouver Regional District, British Columbia, V3H 4Z4, Canada",
+    "query": "Sasamat Lake, Port Moody, British Columbia, Canada"
+  },
+  "poco-trail": {
+    "lat": 49.2279996,
+    "lng": -122.7795365,
+    "source": "nominatim",
+    "osm": "node/10653185639",
+    "label": "Traboulay PoCo Trail, Poco Trail, Mary Hill, Port Coquitlam, Metro Vancouver Regional District, British Columbia, V3C 5Y6, Canada",
+    "query": "Traboulay PoCo Trail, Port Coquitlam, British Columbia, Canada"
+  },
+  "queens": {
+    "lat": 49.215086,
+    "lng": -122.9058936,
+    "source": "nominatim",
+    "osm": "relation/1304120",
+    "label": "Queen's Park, Queens Park, New Westminster, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Queen's Park, New Westminster, British Columbia, Canada"
+  },
+  "quay": {
+    "lat": 49.2001439,
+    "lng": -122.9116198,
+    "source": "nominatim",
+    "osm": "way/83565135",
+    "label": "River Market, 810, Quayside Drive, Quayside, New Westminster, Metro Vancouver Regional District, British Columbia, V3M 6B9, Canada",
+    "query": "Westminster Quay, New Westminster, British Columbia, Canada"
+  },
+  "irving": {
+    "lat": 49.2077876,
+    "lng": -122.9062858,
+    "source": "nominatim",
+    "osm": "way/391276941",
+    "label": "Irving House, 302, Royal Avenue, Downtown, New Westminster, Metro Vancouver Regional District, British Columbia, V3L 1B1, Canada",
+    "query": "Irving House, New Westminster, British Columbia, Canada"
+  },
+  "fort-langley": {
+    "lat": 49.169126,
+    "lng": -122.5793628,
+    "source": "nominatim",
+    "osm": "relation/11696288",
+    "label": "Fort Langley, Township of Langley, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Fort Langley, Langley, British Columbia, Canada"
+  },
+  "campbell": {
+    "lat": 49.0209433,
+    "lng": -122.6580474,
+    "source": "nominatim",
+    "osm": "relation/18351501",
+    "label": "Campbell Valley Regional Park, Brookswood-Fernridge, Township of Langley, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Campbell Valley, Langley, British Columbia, Canada"
+  },
+  "derby": {
+    "lat": 49.1953819,
+    "lng": -122.5939489,
+    "source": "nominatim",
+    "osm": "way/1562249907",
+    "label": "Derby Reach Markow Pond Dam, Township of Langley, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Derby Reach, Langley, British Columbia, Canada"
+  },
+  "flight": {
+    "lat": 49.0990972,
+    "lng": -122.6259909,
+    "source": "nominatim",
+    "osm": "way/1217942778",
+    "label": "Canadian Museum of Flight, 5333, 216 Street, Murrayville, Township of Langley, Metro Vancouver Regional District, British Columbia, V2Y 1L7, Canada",
+    "query": "Canadian Museum of Flight, Langley, British Columbia, Canada"
+  },
+  "golden-ears": {
+    "lat": 49.2781304,
+    "lng": -122.5150211,
+    "source": "nominatim",
+    "osm": "way/1352239169",
+    "label": "Golden Ears Provincial Park Headquaters, Golden Ears, Maple Ridge, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Golden Ears Provincial Park, Maple Ridge, British Columbia, Canada"
+  },
+  "gold-creek": {
+    "lat": 49.3337187,
+    "lng": -122.4574348,
+    "source": "nominatim",
+    "osm": "relation/16467576",
+    "label": "Gold Creek Parking Lot, Lower Falls Trail, Maple Ridge, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Gold Creek Falls, Maple Ridge, British Columbia, Canada"
+  },
+  "kanaka": {
+    "lat": 49.2009406,
+    "lng": -122.5683029,
+    "source": "nominatim",
+    "osm": "way/72834125",
+    "label": "Kanaka Creek, Cottonwood, Maple Ridge, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Kanaka Creek, Maple Ridge, British Columbia, Canada"
+  },
+  "grant-narrows": {
+    "lat": 49.3506535,
+    "lng": -122.6164516,
+    "source": "nominatim",
+    "osm": "way/1088970934",
+    "label": "Grant Narrows, Pitt Meadows, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Grant Narrows, Pitt Meadows, British Columbia, Canada"
+  },
+  "pitt-polder": {
+    "lat": 49.3231823,
+    "lng": -122.6386463,
+    "source": "nominatim",
+    "osm": "way/167260908",
+    "label": "Pitt Polder Ecological Reserve, Pitt Meadows, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Pitt Polder, Pitt Meadows, British Columbia, Canada"
+  },
+  "mill-lake": {
+    "lat": 49.0449821,
+    "lng": -122.3106257,
+    "source": "nominatim",
+    "osm": "way/26192007",
+    "label": "Mill Lake, Alta Avenue, Marshall, Mill Lake, Abbotsford, Fraser Valley Regional District, British Columbia, V2S 4S5, Canada",
+    "query": "Mill Lake, Abbotsford, British Columbia, Canada"
+  },
+  "maan": {
+    "lat": 49.0162277,
+    "lng": -122.2811211,
+    "source": "nominatim",
+    "osm": "relation/13395845",
+    "label": "Maan Farms, Vye Road, Abbotsford, Fraser Valley Regional District, British Columbia, V2S 7N4, Canada",
+    "query": "Maan Farms, Abbotsford, British Columbia, Canada"
+  },
+  "castle": {
+    "lat": 49.0389835,
+    "lng": -122.2234765,
+    "source": "nominatim",
+    "osm": "way/384364819",
+    "label": "Castle Fun Park, 36165, North Parallel Road, Abbotsford, Fraser Valley Regional District, British Columbia, V3G 2K8, Canada",
+    "query": "Castle Fun Park, Abbotsford, British Columbia, Canada"
+  },
+  "mission-park": {
+    "lat": 49.1395529,
+    "lng": -122.2855293,
+    "source": "nominatim",
+    "osm": "way/396326187",
+    "label": "Fraser River Heritage Park, 7494, Hatzic, Mission, Fraser Valley Regional District, British Columbia, V2V 6Y9, Canada",
+    "query": "Fraser River Heritage Park, Mission, British Columbia, Canada"
+  },
+  "rolley": {
+    "lat": 49.2452347,
+    "lng": -122.3870772,
+    "source": "nominatim",
+    "osm": "way/37826907",
+    "label": "Rolley Lake, Lakeside Trail Loop, Mission, Fraser Valley Regional District, British Columbia, V4S 1C4, Canada",
+    "query": "Rolley Lake, Mission, British Columbia, Canada"
+  },
+  "cultus": {
+    "lat": 49.0937899,
+    "lng": -121.9721046,
+    "source": "nominatim",
+    "osm": "way/1561451363",
+    "label": "Cultus Lake Road, Vedder Crossing, Chilliwack, Fraser Valley Regional District, British Columbia, V2R 4C6, Canada",
+    "query": "Cultus Lake, Chilliwack, British Columbia, Canada"
+  },
+  "vedder": {
+    "lat": 49.0919114,
+    "lng": -122.0391628,
+    "source": "nominatim",
+    "osm": "way/390280830",
+    "label": "Rotary Vedder River Trail, Yarrow, Chilliwack, Fraser Valley Regional District, British Columbia, V2R 5E1, Canada",
+    "query": "Vedder River Trail, Chilliwack, British Columbia, Canada"
+  },
+  "heron": {
+    "lat": 49.0924458,
+    "lng": -122.0449422,
+    "source": "nominatim",
+    "osm": "relation/8307159",
+    "label": "Great Blue Heron Nature Reserve, Yarrow, Chilliwack, Fraser Valley Regional District, British Columbia, Canada",
+    "query": "Great Blue Heron Nature Reserve, Chilliwack, British Columbia, Canada"
+  },
+  "shannon": {
+    "lat": 49.7027293,
+    "lng": -123.1539865,
+    "source": "nominatim",
+    "osm": "way/1078932045",
+    "label": "Shannon Falls, Dentville, Area D (Elaho/Garibaldi), Squamish-Lillooet Regional District, British Columbia, Canada",
+    "query": "Shannon Falls, Squamish, British Columbia, Canada"
+  },
+  "gondola": {
+    "lat": 49.6750996,
+    "lng": -123.1570435,
+    "source": "nominatim",
+    "osm": "node/5328156721",
+    "label": "Sea to Sky Gondola, Shannon Falls Connector, Area D (Elaho/Garibaldi), Squamish-Lillooet Regional District, British Columbia, V8B 0A6, Canada",
+    "query": "Sea to Sky Gondola, Squamish, British Columbia, Canada"
+  },
+  "chief": {
+    "lat": 49.6775687,
+    "lng": -123.1543115,
+    "source": "nominatim",
+    "osm": "way/105752280",
+    "label": "Stawamus Chief, Area D (Elaho/Garibaldi), Squamish-Lillooet Regional District, British Columbia, V8B 0A6, Canada",
+    "query": "Stawamus Chief, Squamish, British Columbia, Canada"
+  },
+  "railway": {
+    "lat": 49.7275642,
+    "lng": -123.1604166,
+    "source": "nominatim",
+    "osm": "node/7176402774",
+    "label": "West Coast Railway Heritage Park, 39645, Government Road, The Northyards, Squamish, Squamish-Lillooet Regional District, British Columbia, V8B 0G5, Canada",
+    "query": "West Coast Railway Heritage Park, Squamish, British Columbia, Canada"
+  },
+  "britannia-mine": {
+    "lat": 49.6231033,
+    "lng": -123.2039606,
+    "source": "nominatim",
+    "osm": "way/641097922",
+    "label": "The Britannia Mine Museum, Sea-to-Sky Highway, Britannia Beach, Area D (Elaho/Garibaldi), Squamish-Lillooet Regional District, British Columbia, V0N 1J0, Canada",
+    "query": "Britannia Mine Museum, Squamish, British Columbia, Canada"
+  },
+  "whistler-village": {
+    "lat": 50.1146593,
+    "lng": -122.9559789,
+    "source": "nominatim",
+    "osm": "node/1080169553",
+    "label": "Whistler Village, Whistler, Squamish-Lillooet Regional District, British Columbia, V8E 1H4, Canada",
+    "query": "Whistler Village, Whistler, British Columbia, Canada"
+  },
+  "peak2peak": {
+    "lat": 50.0825588,
+    "lng": -122.9232211,
+    "source": "nominatim",
+    "osm": "way/32774598",
+    "label": "Peak 2 Peak Gondola, Singing Pass Trail, Whistler, Squamish-Lillooet Regional District, British Columbia, V8E 0X9, Canada",
+    "query": "Peak 2 Peak Gondola, Whistler, British Columbia, Canada"
+  },
+  "lost-lake": {
+    "lat": 50.1288724,
+    "lng": -122.9372729,
+    "source": "nominatim",
+    "osm": "relation/2312610",
+    "label": "Lost Lake, Lost Lake Trail, Alpine Meadows, Whistler Village, Whistler, Squamish-Lillooet Regional District, British Columbia, V0N 1B7, Canada",
+    "query": "Lost Lake, Whistler, British Columbia, Canada"
+  },
+  "harrison-springs": {
+    "lat": 49.3027611,
+    "lng": -121.7861594,
+    "source": "nominatim",
+    "osm": "way/268402101",
+    "label": "Harrison Hot Springs, 191, Lillooet Avenue, Harrison Hot Springs, Kent, Fraser Valley Regional District, British Columbia, V0M 1K0, Canada",
+    "query": "Harrison Hot Springs, Harrison Hot Springs, British Columbia, Canada"
+  },
+  "snug": {
+    "lat": 49.3792001,
+    "lng": -123.338623,
+    "source": "nominatim",
+    "osm": "node/4535984741",
+    "label": "Canada Post, 944, Dorman Road, Snug Cove, Bowen Island Municipality, Metro Vancouver Regional District, British Columbia, V0N 1G0, Canada",
+    "query": "Snug Cove, Bowen Island, British Columbia, Canada"
+  },
+  "killarney": {
+    "lat": 49.3918746,
+    "lng": -123.3542557,
+    "source": "nominatim",
+    "osm": "way/328693308",
+    "label": "Killarney Lake, Bowen Island Municipality, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "Killarney Lake, Bowen Island, British Columbia, Canada"
+  },
+  "inner-harbour": {
+    "lat": 48.4255053,
+    "lng": -123.3736666,
+    "source": "nominatim",
+    "osm": "relation/8346143",
+    "label": "Victoria Inner Harbour, Victoria, Capital Regional District, British Columbia, Canada",
+    "query": "Victoria Inner Harbour, Victoria, British Columbia, Canada"
+  },
+  "fishermans": {
+    "lat": 48.4227595,
+    "lng": -123.3825675,
+    "source": "nominatim",
+    "osm": "node/1522688475",
+    "label": "Fisherman's Wharf, B, James Bay, Victoria, Capital Regional District, British Columbia, V8V 1P8, Canada",
+    "query": "Fisherman's Wharf, Victoria, British Columbia, Canada"
+  },
+  "othello": {
+    "lat": 49.3777311,
+    "lng": -121.368743,
+    "source": "nominatim",
+    "osm": "node/1693765604",
+    "label": "Othello / Quintette Tunnels, Othello Tunnels Path, Hope, Fraser Valley Regional District, British Columbia, V0X 1L1, Canada",
+    "query": "Othello Tunnels, Hope, British Columbia, Canada"
+  },
+  "fairhaven": {
+    "lat": 48.7188762,
+    "lng": -122.5083889,
+    "source": "nominatim",
+    "osm": "relation/12037374",
+    "label": "Fairhaven, Bellingham, Whatcom County, Washington, United States",
+    "query": "Fairhaven, Bellingham, Washington, USA"
+  },
+  "boulevard": {
+    "lat": 48.7304449,
+    "lng": -122.5033985,
+    "source": "nominatim",
+    "osm": "way/43147238",
+    "label": "Boulevard Park, Fairhaven, Bellingham, Whatcom County, Washington, United States",
+    "query": "Boulevard Park, Bellingham, Washington, USA"
+  },
+  "false-creek": {
+    "lat": 49.2745516,
+    "lng": -123.1060401,
+    "source": "nominatim",
+    "osm": "relation/13373124",
+    "label": "False Creek, Fairview, Vancouver, Metro Vancouver Regional District, British Columbia, Canada",
+    "query": "False Creek, Vancouver, British Columbia, Canada"
+  },
+  "hatchery": {
+    "lat": 49.3566642,
+    "lng": -123.1101182,
+    "source": "nominatim",
+    "osm": "way/332994042",
+    "label": "Capilano River Hatchery, 4500, Capilano Park Road, Handsworth, Upper Capilano, District of North Vancouver, Metro Vancouver Regional District, British Columbia, V7R 4L3, Canada",
+    "query": "Capilano River Hatchery, North Vancouver, British Columbia, Canada"
+  },
+  "ambleside": {
+    "lat": 49.3239429,
+    "lng": -123.1478711,
+    "source": "nominatim",
+    "osm": "relation/14225464",
+    "label": "Ambleside Park, Park Royal, West Vancouver, Metro Vancouver Regional District, British Columbia, V7T 1B1, Canada",
+    "query": "Ambleside Park, West Vancouver, British Columbia, Canada"
+  },
+  "cultus-water": {
+    "lat": 49.0746868,
+    "lng": -121.9777939,
+    "source": "nominatim",
+    "osm": "way/506560877",
+    "label": "Cultus Lake Adventure Park, Fir Street, Cultus Lake, Area H (Cultus Lake/Columbia Valley), Fraser Valley Regional District, British Columbia, V2R 4Y5, Canada",
+    "query": "Cultus Lake Adventure Park, British Columbia, Canada"
+  },
+  "cascade": {
+    "lat": 49.2748361,
+    "lng": -122.2129799,
+    "source": "nominatim",
+    "osm": "node/4267322599",
+    "label": "Cascade Falls, Area F (McConnell Creek/Hatzic Prairie), Fraser Valley Regional District, British Columbia, V2V 0A8, Canada",
+    "query": "Cascade Falls, Fraser Valley, British Columbia, Canada"
+  }
+}
