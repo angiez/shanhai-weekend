@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>山海周末 · 大温家庭的出门地图</title>
+  <meta name="description" content="山海周末是大温家庭的出门地图。按城市找公园、海滩、博物馆、农场和一日游，中英地名对照，下雨也有地方去。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <header class="topbar">
+    <a class="brand" href="#/">
+      <span class="brand-mark" aria-hidden="true">山</span>
+      <span>
+        <strong>山海周末</strong>
+        <small>大温家庭的出门地图</small>
+      </span>
+    </a>
+    <form class="search" id="search-form" role="search">
+      <label class="sr" for="q">搜索地点、城市或玩法</label>
+      <input id="q" type="search" placeholder="搜吊桥、三文鱼、列治文、雨天…" autocomplete="off" />
+    </form>
+    <nav class="nav" aria-label="主要">
+      <a href="#/" data-nav="home">地图</a>
+      <a href="#/routes" data-nav="routes">路线</a>
+      <a href="#/rain" data-nav="rain">雨天</a>
+      <a href="#/saved" data-nav="saved">想去 <em id="saved-count">0</em></a>
+    </nav>
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav">菜单</button>
+  </header>
+  <div class="mobile-nav" id="mobile-nav" hidden>
+    <a href="#/">地图</a>
+    <a href="#/routes">路线</a>
+    <a href="#/rain">雨天</a>
+    <a href="#/saved">想去</a>
+  </div>
+  <main id="main"></main>
+  <footer class="footer">
+    <div>
+      <strong>山海周末</strong>
+      <p>给住在大温、想周末带家人出门的人。不卖票，只把地方讲清楚：在哪、适不适合小孩、大概要花多少、这个月值不值得去。</p>
+    </div>
+    <p class="fine">开放时间、预约和票价会变，出发前以公园告示或官方网站为准。山路、湖水和海边请按自己的经验和天气决定。跨境需要护照和合法入境资格。</p>
+  </footer>
+  <script src="data.js"></script>
+  <script src="places1.js"></script>
+  <script src="places2.js"></script>
+  <script src="places3.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
