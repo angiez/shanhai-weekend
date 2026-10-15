@@ -1,7 +1,8 @@
--- Shanhai Weekend community schema.
--- Run this only in a new Supabase project created in ca-central-1.
--- Do not run it on a United States project.
--- Do not put the service role key in the website.
+-- Migration for the Canadian project shanhai-weekend-ca in ca-central-1 only.
+-- Do not run this on the paused United States project.
+-- Do not put a secret key or the service role key in the website.
+-- After this SQL, set the Auth site URL to https://weekend.bchomehub.com,
+-- allow redirect https://weekend.bchomehub.com/account/, and keep email confirmation on.
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -325,6 +326,8 @@ revoke all on function public.guard_registration() from public, anon, authentica
 grant execute on function public.confirmed_count(uuid) to authenticated;
 grant execute on function public.is_confirmed(uuid) to authenticated;
 grant execute on function public.chat_open(uuid) to authenticated;
+
+alter table public.messages replica identity full;
 
 do $$
 begin

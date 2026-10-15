@@ -37,6 +37,21 @@ test("public pages keep canonical URLs, sitemap entries, and bilingual markup", 
 
   const anonKey = jwt("anon");
   build({
+    SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_REGION: "ca-central-1",
+    SUPABASE_ANON_KEY: "sb_secret_not_for_browsers"
+  });
+  const secretBlocked = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+  assert.equal(secretBlocked.includes("sb_secret_not_for_browsers"), false);
+
+  build({
+    SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_REGION: "ca-central-1",
+    SUPABASE_ANON_KEY: "sb_publishable_example"
+  });
+  const publishable = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+  assert.match(publishable, /sb_publishable_example/);
+  build({
     SUPABASE_URL: "https://cuheydevtbwmfzvvdxaw.supabase.co",
     SUPABASE_REGION: "ca-central-1",
     SUPABASE_ANON_KEY: anonKey

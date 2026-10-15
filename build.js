@@ -27,11 +27,15 @@ const PLACE_COORDS = fs.existsSync(path.join(root, "place-coords.json"))
   ? JSON.parse(fs.readFileSync(path.join(root, "place-coords.json"), "utf8"))
   : {};
 function publicAnonKey() {
-  const key = process.env.SUPABASE_ANON_KEY || "";
+  const key = (process.env.SUPABASE_ANON_KEY || "").trim();
   if (!key) return "";
+  if (/^sb_secret_/i.test(key)) return "";
+  if (/^sb_publishable_[A-Za-z0-9_-]+$/.test(key)) return key;
+  const parts = key.split(".");
+  if (parts.length !== 3) return "";
   try {
-    const payload = JSON.parse(Buffer.from(key.split(".")[1], "base64url").toString("utf8"));
-    if (payload.role === "service_role") return "";
+    const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+    if (payload.role !== "anon") return "";
   } catch (err) {
     return "";
   }
@@ -580,8 +584,8 @@ write("privacy/index.html", page({
     <p lang="zh-CN">活动通知邮件默认不发送，并且和报名是分开的。只有你另外勾选之后才会收到，并可以要求停止。网站没有把任何人同步到 GoHighLevel 或其他营销系统。这是为了符合加拿大反垃圾邮件法（CASL）。</p>
     <p lang="en">Outing emails are off unless you opt in separately from joining an activity. You can ask to stop them. The site does not synchronize anyone to GoHighLevel or another marketing system. This is meant to meet Canada's anti-spam law.</p>
     <h2>计划中的保存地点 Planned storage</h2>
-    <p lang="zh-CN">账户功能还没有接入。计划是：将来若开放注册，邮箱、显示名、报名和群聊放在加拿大区域（ca-central-1）的 Supabase 项目里。这一页并不表示网站用到的每一项服务都在加拿大。地图图块来自 OpenStreetMap，字体来自 Google。这两项以及你若同意才加载的 Google Analytics，都可能在加拿大以外处理连接信息。将来的验证邮件由账户服务的邮件通道发送，该通道是否在加拿大尚未核实。</p>
-    <p lang="en">Accounts are not connected. The plan, if registration opens, is to store email addresses, display names, registrations, and chat in a Supabase project in Canada (ca-central-1). This page does not mean every service the website uses is in Canada. Map tiles come from OpenStreetMap and fonts come from Google. Those services, and Google Analytics if you accept it, can process connection data outside Canada. A future confirmation email would use the account service's mail delivery, and that path has not been verified as Canadian.</p>
+    <p lang="zh-CN">账户数据库是加拿大区域（ca-central-1）的 Supabase 项目。网站还没有接上它，所以现在不会把邮箱、报名或群聊送到那里。接上之后，这些资料保存在加拿大，并且不对公众公开。这一页并不表示网站用到的每一项服务都在加拿大。地图图块来自 OpenStreetMap，字体来自 Google。这两项，以及你若同意才加载的 Google Analytics，都可能在加拿大以外处理连接信息。验证邮件由 Supabase 的邮件服务发出，该路径是否全程留在加拿大尚未核实。</p>
+    <p lang="en">The account database is a Supabase project in Canada (ca-central-1). The website is not connected to it yet, so it does not send email addresses, registrations, or chat there. After it is connected, those records are stored in Canada and are not public. This page does not mean every service the website uses is in Canada. Map tiles come from OpenStreetMap and fonts come from Google. Those services, and Google Analytics if you accept it, can process connection data outside Canada. Confirmation email is sent by Supabase's mail service, and that path has not been verified to stay in Canada.</p>
     <h2>网站分析 Analytics</h2>
     <p lang="zh-CN">Google Analytics 默认不加载。只有你在这台浏览器里另外同意之后才会加载，并可以拒绝。这和账户里的活动邮件选项是两件事。</p>
     <p lang="en">Google Analytics does not load unless you accept it in this browser. You can refuse. That choice is separate from the optional outing-email checkbox on an account.</p>
