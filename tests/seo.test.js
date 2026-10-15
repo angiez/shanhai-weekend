@@ -37,7 +37,28 @@ test("public pages keep canonical URLs, sitemap entries, and bilingual markup", 
 
   const anonKey = jwt("anon");
   build({
+    SUPABASE_URL: "https://cuheydevtbwmfzvvdxaw.supabase.co",
+    SUPABASE_REGION: "ca-central-1",
+    SUPABASE_ANON_KEY: anonKey
+  });
+  const unitedStates = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+  assert.equal(unitedStates.includes("cuheydevtbwmfzvvdxaw"), false);
+  assert.equal(unitedStates.includes(anonKey), false);
+
+  build({
     SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_ANON_KEY: anonKey,
+    GA_MEASUREMENT_ID: "G-TEST1234",
+    GOOGLE_SITE_VERIFICATION: "verifyToken123",
+    CONTACT_EMAIL: ""
+  });
+  const withoutRegion = fs.readFileSync(path.join(dist, "index.html"), "utf8");
+  assert.equal(withoutRegion.includes(anonKey), false);
+  assert.match(withoutRegion, /"supabaseRegion":""/);
+
+  build({
+    SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_REGION: "ca-central-1",
     SUPABASE_ANON_KEY: anonKey,
     GA_MEASUREMENT_ID: "G-TEST1234",
     GOOGLE_SITE_VERIFICATION: "verifyToken123",
@@ -52,6 +73,7 @@ test("public pages keep canonical URLs, sitemap entries, and bilingual markup", 
   assert.match(home, /google-site-verification" content="verifyToken123"/);
   assert.match(home, /"gaId":"G-TEST1234"/);
   assert.doesNotMatch(home, /googletagmanager\.com/);
+  assert.match(home, /"supabaseRegion":"ca-central-1"/);
   assert.match(home, new RegExp(anonKey.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 
   const stanley = fs.readFileSync(path.join(dist, "place", "stanley", "index.html"), "utf8");
@@ -85,8 +107,12 @@ test("public pages keep canonical URLs, sitemap entries, and bilingual markup", 
   assert.match(guidelines, /私人住宅/);
   assert.match(guidelines, /未成年人/);
   const privacy = fs.readFileSync(path.join(dist, "privacy", "index.html"), "utf8");
-  assert.match(privacy, /us-east-1/);
+  assert.match(privacy, /ca-central-1/);
   assert.match(privacy, /GoHighLevel/);
+  assert.match(privacy, /OpenStreetMap/);
+  assert.match(privacy, /does not mean every service/);
+  assert.doesNotMatch(privacy, /us-east-1/);
+  assert.doesNotMatch(privacy, /cuheydevtbwmfzvvdxaw/);
   assert.match(privacy, /Google Analytics/);
   const client = fs.readFileSync(path.join(dist, "community.js"), "utf8");
   assert.equal(client.includes('.from("reports").select'), false);

@@ -1,6 +1,7 @@
 -- Shanhai Weekend community schema.
--- Run in the Supabase SQL editor after creating a project.
--- Use a Canadian region if one is offered. Do not put the service role key in the website.
+-- Run this only in a new Supabase project created in ca-central-1.
+-- Do not run it on a United States project.
+-- Do not put the service role key in the website.
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -158,14 +159,27 @@ create trigger registrations_guard
   before insert or update on public.registrations
   for each row execute function public.guard_registration();
 
-create or replace view public.activity_people
-with (security_invoker = false) as
+drop view if exists public.activity_people;
+create view public.activity_people
+with (security_invoker = true) as
 select r.activity_id, p.display_name, r.created_at
 from public.registrations r
 join public.profiles p on p.id = r.user_id
 where r.status = 'confirmed';
 
-grant select on public.activity_people to anon, authenticated;
+revoke all on public.activity_people from public, anon;
+grant select on public.activity_people to authenticated;
+
+drop view if exists public.activity_counts;
+create view public.activity_counts
+with (security_invoker = false) as
+select activity_id, count(*)::int as participants
+from public.registrations
+where status = 'confirmed'
+group by activity_id;
+
+revoke all on public.activity_counts from public;
+grant select on public.activity_counts to anon, authenticated;
 
 drop policy if exists activities_read on public.activities;
 create policy activities_read on public.activities

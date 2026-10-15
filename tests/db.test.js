@@ -111,5 +111,22 @@ test("two accounts cannot read chat until both join, and outsiders stay out", as
   assert.equal(hiddenRequest.rows.length, 0);
   await fails(db, B, "insert into public.deletion_requests (user_id) values ($1)", [A]);
 
+  const ownProfile = await asUser(db, C, "select id from public.profiles");
+  assert.deepEqual(ownProfile.rows.map(function (row) { return row.id; }), [C]);
+  const hiddenNames = await asUser(db, C, "select display_name from public.activity_people where activity_id = $1", [ACT]);
+  assert.equal(hiddenNames.rows.length, 0);
+  const memberNames = await asUser(db, A, "select display_name from public.activity_people where activity_id = $1 order by display_name", [ACT]);
+  assert.deepEqual(memberNames.rows.map(function (row) { return row.display_name; }), ["Ada", "Bo"]);
+
+  await db.exec("reset role");
+  await db.exec("set role anon");
+  await assert.rejects(function () { return db.query("select * from public.profiles"); });
+  await assert.rejects(function () { return db.query("select * from public.messages"); });
+  await assert.rejects(function () { return db.query("select * from public.registrations"); });
+  await assert.rejects(function () { return db.query("select * from public.activity_people"); });
+  const publicCount = await db.query("select participants from public.activity_counts where activity_id = $1", [ACT]);
+  assert.equal(publicCount.rows[0].participants, 2);
+  await db.exec("reset role");
+
   await db.close();
 });

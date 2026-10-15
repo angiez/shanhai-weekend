@@ -37,9 +37,19 @@ function publicAnonKey() {
   }
   return key;
 }
+function canadianProjectUrl() {
+  const region = process.env.SUPABASE_REGION || "";
+  const url = (process.env.SUPABASE_URL || "").trim().replace(/\/$/, "");
+  if (region !== "ca-central-1") return "";
+  if (!/^https:\/\/[a-z0-9]+\.supabase\.co$/i.test(url)) return "";
+  if (url.toLowerCase().includes("cuheydevtbwmfzvvdxaw")) return "";
+  return url;
+}
+const canadaUrl = canadianProjectUrl();
 const PUBLIC = {
-  supabaseUrl: process.env.SUPABASE_URL || "",
-  supabaseAnonKey: publicAnonKey(),
+  supabaseUrl: canadaUrl,
+  supabaseAnonKey: canadaUrl ? publicAnonKey() : "",
+  supabaseRegion: canadaUrl ? "ca-central-1" : "",
   gaId: /^G-[A-Z0-9]+$/.test(process.env.GA_MEASUREMENT_ID || "") ? process.env.GA_MEASUREMENT_ID : "",
   contactEmail: process.env.CONTACT_EMAIL || "",
   siteVerification: /^[A-Za-z0-9_-]{8,128}$/.test(process.env.GOOGLE_SITE_VERIFICATION || "") ? process.env.GOOGLE_SITE_VERIFICATION : ""
@@ -158,7 +168,7 @@ function page({ title, description, url, jsonld, main, nav, extraHead = "", extr
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" /></noscript>
   <link rel="stylesheet" href="/styles.css" />
   ${PUBLIC.siteVerification ? `<meta name="google-site-verification" content="${esc(PUBLIC.siteVerification)}" />` : ""}
-  <script>window.SHANHAI_PUBLIC=${JSON.stringify({ supabaseUrl: PUBLIC.supabaseUrl, supabaseAnonKey: PUBLIC.supabaseAnonKey, contactEmail: PUBLIC.contactEmail, gaId: PUBLIC.gaId })};</script>
+  <script>window.SHANHAI_PUBLIC=${JSON.stringify({ supabaseUrl: PUBLIC.supabaseUrl, supabaseAnonKey: PUBLIC.supabaseAnonKey, supabaseRegion: PUBLIC.supabaseRegion, contactEmail: PUBLIC.contactEmail, gaId: PUBLIC.gaId })};</script>
   ${extraHead}
   ${(Array.isArray(jsonld) ? jsonld : [jsonld]).map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`).join("\n")}
 </head>
@@ -561,17 +571,17 @@ write("privacy/index.html", page({
     <p lang="zh-CN">看地点、地图和路线不需要注册。「想去」保存在你这台浏览器里，不会上传。</p>
     <p lang="en">Reading places, the map, and routes does not require an account. Saved places stay in this browser and are not uploaded.</p>
     <h2>账户与活动 Accounts and activities</h2>
-    <p lang="zh-CN">如果你注册，我们会保存邮箱、显示名、你发起或参加的活动，以及你在已解锁群聊里发的消息。邮箱不会展示给其他参加者。密码由账户服务保存，网站页面不保存密码明文。</p>
-    <p lang="en">If you register, the account service stores your email, display name, the activities you create or join, and messages you send in an unlocked chat. Your email is not shown to other participants. The website does not keep a plaintext password.</p>
+    <p lang="zh-CN">注册和群聊现在没有开放。将来开放后，才会保存邮箱、显示名、报名和已解锁群聊里的消息。这些资料不会对公众公开。邮箱不会展示给其他参加者。密码由账户服务保存，网站页面不保存密码明文。</p>
+    <p lang="en">Registration and chat are not open. If they open later, the account service would store an email, display name, registrations, and messages from an unlocked chat. Those records are not public. An email is not shown to other participants. The website does not keep a plaintext password.</p>
     <h2>群聊 Chat</h2>
     <p lang="zh-CN">群聊在第二位不同的参加者确认报名后才打开。只有这次活动的已报名参加者能读消息。举报只交给运营者。你可以屏蔽另一位参加者。</p>
     <p lang="en">Chat opens after a second, different person confirms. Only confirmed participants of that activity can read messages. Reports go to the operator. You can block another participant.</p>
     <h2>营销邮件 Marketing email</h2>
-    <p lang="zh-CN">活动通知邮件默认不发送，并且和报名是分开的。只有你另外勾选之后才会收到，并可以要求停止。勾选不会把你加入房地产营销或 GoHighLevel。这是为了符合加拿大反垃圾邮件法（CASL）。</p>
-    <p lang="en">Outing emails are off unless you opt in separately from joining an activity. You can ask to stop them. Opting in does not add you to real estate marketing or GoHighLevel. This is meant to meet Canada's anti-spam law.</p>
-    <h2>保存地点与跨境 Storage and location</h2>
-    <p lang="zh-CN">如果运营者接入账户功能，邮箱、显示名、报名和群聊会由现有的 Supabase 项目处理。该项目位于美国东部（us-east-1），不在加拿大。也就是说，这些个人资料会在美国处理和保存。浏览地点、地图和路线仍然不需要注册，也不会因此上传个人资料。在向真实家庭开放注册之前，运营者需要自行确认这样跨境保存是否符合自己的义务。这不是律师意见。</p>
-    <p lang="en">If accounts are connected, email addresses, display names, registrations, and chat are processed by the operator's existing Supabase project in the United States (us-east-1), not in Canada. That personal information would be processed and stored in the United States. Browsing places, the map, and routes still does not require an account and does not upload personal information. Before opening registration to real families, the operator needs to decide whether this cross-border storage meets their own obligations. This is not legal advice.</p>
+    <p lang="zh-CN">活动通知邮件默认不发送，并且和报名是分开的。只有你另外勾选之后才会收到，并可以要求停止。网站没有把任何人同步到 GoHighLevel 或其他营销系统。这是为了符合加拿大反垃圾邮件法（CASL）。</p>
+    <p lang="en">Outing emails are off unless you opt in separately from joining an activity. You can ask to stop them. The site does not synchronize anyone to GoHighLevel or another marketing system. This is meant to meet Canada's anti-spam law.</p>
+    <h2>计划中的保存地点 Planned storage</h2>
+    <p lang="zh-CN">账户功能还没有接入。计划是：将来若开放注册，邮箱、显示名、报名和群聊放在加拿大区域（ca-central-1）的 Supabase 项目里。这一页并不表示网站用到的每一项服务都在加拿大。地图图块来自 OpenStreetMap，字体来自 Google。这两项以及你若同意才加载的 Google Analytics，都可能在加拿大以外处理连接信息。将来的验证邮件由账户服务的邮件通道发送，该通道是否在加拿大尚未核实。</p>
+    <p lang="en">Accounts are not connected. The plan, if registration opens, is to store email addresses, display names, registrations, and chat in a Supabase project in Canada (ca-central-1). This page does not mean every service the website uses is in Canada. Map tiles come from OpenStreetMap and fonts come from Google. Those services, and Google Analytics if you accept it, can process connection data outside Canada. A future confirmation email would use the account service's mail delivery, and that path has not been verified as Canadian.</p>
     <h2>网站分析 Analytics</h2>
     <p lang="zh-CN">Google Analytics 默认不加载。只有你在这台浏览器里另外同意之后才会加载，并可以拒绝。这和账户里的活动邮件选项是两件事。</p>
     <p lang="en">Google Analytics does not load unless you accept it in this browser. You can refuse. That choice is separate from the optional outing-email checkbox on an account.</p>

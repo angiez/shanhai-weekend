@@ -34,7 +34,7 @@ function el(tag, className, value) {
 }
 
 function configured() {
-  return Boolean(cfg.supabaseUrl && cfg.supabaseAnonKey);
+  return cfg.supabaseRegion === "ca-central-1" && Boolean(cfg.supabaseUrl && cfg.supabaseAnonKey);
 }
 
 function authMessage(error) {
@@ -82,7 +82,7 @@ function accountLinks() {
 }
 
 function showSetup(root) {
-  root.append(el("div", "note", "结伴报名还没有接上账户服务。浏览地点不需要注册。活动、验证邮件和群聊要等网站运营者接入 Supabase 之后才能用。Account features are not connected yet. Browsing does not require an account."));
+  root.append(el("div", "note", "结伴报名还没有接上加拿大的账户服务。浏览地点不需要注册。活动、验证邮件和群聊要等 ca-central-1 的 Supabase 接上之后才能用。Account features stay off until a database in Canada is connected. Browsing does not require an account."));
   root.append(accountLinks());
 }
 
@@ -261,9 +261,10 @@ async function renderActivities(root) {
     list.append(el("p", "note", error.message));
     return;
   }
-  const { data: people } = await (await db()).from("activity_people").select("activity_id,display_name");
+  const { data: counts } = await (await db()).from("activity_counts").select("activity_id,participants");
   (data || []).forEach(function (activity) {
-    const names = (people || []).filter(function (row) { return row.activity_id === activity.id; });
+    const countRow = (counts || []).find(function (row) { return row.activity_id === activity.id; });
+    const names = { length: countRow ? countRow.participants : 0 };
     const card = el("article", "card");
     const link = el("a", "card-link");
     link.href = "/activities/view/?id=" + encodeURIComponent(activity.id);
@@ -357,16 +358,21 @@ async function renderActivity(root) {
     ? await (await db()).from("registrations").select("user_id,status").eq("activity_id", id)
     : { data: [] };
   const registrations = (regs || []).map(function (row) { return { userId: row.user_id, status: row.status }; });
-  const { data: people } = await (await db()).from("activity_people").select("display_name").eq("activity_id", id);
+  const { data: countRow } = await (await db()).from("activity_counts").select("participants").eq("activity_id", id).maybeSingle();
+  const participantCount = countRow ? countRow.participants : 0;
+  const { data: people } = user
+    ? await (await db()).from("activity_people").select("display_name").eq("activity_id", id)
+    : { data: [] };
   const peopleBox = el("div", "panel");
   peopleBox.append(el("h2", "", "参加者 Participants"));
   (people || []).forEach(function (person) { peopleBox.append(el("p", "", person.display_name)); });
-  peopleBox.append(el("p", "meta", (people || []).length + " / " + activity.capacity));
+  if (!(people || []).length) peopleBox.append(el("p", "meta", "姓名只对已报名的参加者显示。Names are shown only to people who joined."));
+  peopleBox.append(el("p", "meta", participantCount + " / " + activity.capacity));
   root.append(peopleBox);
   if (activity.status === "cancelled") root.append(el("div", "note", "这次活动已取消。This activity was cancelled."));
   const visible = registrations.slice();
   const seen = visible.filter(function (row) { return row.status === "confirmed"; }).length;
-  for (let i = seen; i < (people || []).length; i += 1) visible.push({ userId: "hidden-" + i, status: "confirmed" });
+  for (let i = seen; i < participantCount; i += 1) visible.push({ userId: "hidden-" + i, status: "confirmed" });
   const decision = rules.canRegister(activity, visible, user && user.id);
   if (!user) root.append(accountLinks());
   else if (decision.ok) {
@@ -402,7 +408,7 @@ async function renderActivity(root) {
   chat.append(el("h2", "", "群聊 Chat"));
   chat.append(el("p", "meta", "在公共场所见面。不要在这里留下电话、家庭住址，也不要单独约未成年人。Meet in public. Do not leave a phone number or home address, and do not arrange to meet a minor alone."));
   const joined = registrations.some(function (row) { return user && row.userId === user.id && row.status === "confirmed"; });
-  if (activity.status !== "open" || (people || []).length < 2) {
+  if (activity.status !== "open" || participantCount < 2) {
     chat.append(el("p", "", "还在等另一位参加者。Waiting for another participant."));
   } else if (!joined) {
     chat.append(el("p", "", "只有已报名的参加者可以进入群聊。Only registered participants can read the chat."));
