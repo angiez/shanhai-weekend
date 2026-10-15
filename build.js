@@ -157,9 +157,8 @@ function page({ title, description, url, jsonld, main, nav, extraHead = "", extr
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" /></noscript>
   <link rel="stylesheet" href="/styles.css" />
-  ${PUBLIC.gaId ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(PUBLIC.gaId)}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config',${JSON.stringify(PUBLIC.gaId)},{anonymize_ip:true});</script>` : ""}
   ${PUBLIC.siteVerification ? `<meta name="google-site-verification" content="${esc(PUBLIC.siteVerification)}" />` : ""}
-  <script>window.SHANHAI_PUBLIC=${JSON.stringify({ supabaseUrl: PUBLIC.supabaseUrl, supabaseAnonKey: PUBLIC.supabaseAnonKey, contactEmail: PUBLIC.contactEmail })};</script>
+  <script>window.SHANHAI_PUBLIC=${JSON.stringify({ supabaseUrl: PUBLIC.supabaseUrl, supabaseAnonKey: PUBLIC.supabaseAnonKey, contactEmail: PUBLIC.contactEmail, gaId: PUBLIC.gaId })};</script>
   ${extraHead}
   ${(Array.isArray(jsonld) ? jsonld : [jsonld]).map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`).join("\n")}
 </head>
@@ -568,11 +567,17 @@ write("privacy/index.html", page({
     <p lang="zh-CN">群聊在第二位不同的参加者确认报名后才打开。只有这次活动的已报名参加者能读消息。举报只交给运营者。你可以屏蔽另一位参加者。</p>
     <p lang="en">Chat opens after a second, different person confirms. Only confirmed participants of that activity can read messages. Reports go to the operator. You can block another participant.</p>
     <h2>营销邮件 Marketing email</h2>
-    <p lang="zh-CN">活动通知邮件默认不发送。只有你勾选之后才会收到，并可以要求停止。这是为了符合加拿大反垃圾邮件法（CASL）。</p>
-    <p lang="en">Outing emails are off unless you opt in. You can ask to stop them. This is meant to meet Canada's anti-spam law.</p>
-    <h2>保存与权利 Storage and your rights</h2>
-    <p lang="zh-CN">账户数据应放在运营者开设的 Supabase 项目里，并优先选择加拿大区域。你可以要求查看、更正或删除自己的资料。删除账户后，相关报名和消息会按数据库规则删除或断开关联。</p>
-    <p lang="en">Account data belongs in the operator's own Supabase project, preferably in a Canadian region. You can ask to access, correct, or delete your information.</p>
+    <p lang="zh-CN">活动通知邮件默认不发送，并且和报名是分开的。只有你另外勾选之后才会收到，并可以要求停止。勾选不会把你加入房地产营销或 GoHighLevel。这是为了符合加拿大反垃圾邮件法（CASL）。</p>
+    <p lang="en">Outing emails are off unless you opt in separately from joining an activity. You can ask to stop them. Opting in does not add you to real estate marketing or GoHighLevel. This is meant to meet Canada's anti-spam law.</p>
+    <h2>保存地点与跨境 Storage and location</h2>
+    <p lang="zh-CN">如果运营者接入账户功能，邮箱、显示名、报名和群聊会由现有的 Supabase 项目处理。该项目位于美国东部（us-east-1），不在加拿大。也就是说，这些个人资料会在美国处理和保存。浏览地点、地图和路线仍然不需要注册，也不会因此上传个人资料。在向真实家庭开放注册之前，运营者需要自行确认这样跨境保存是否符合自己的义务。这不是律师意见。</p>
+    <p lang="en">If accounts are connected, email addresses, display names, registrations, and chat are processed by the operator's existing Supabase project in the United States (us-east-1), not in Canada. That personal information would be processed and stored in the United States. Browsing places, the map, and routes still does not require an account and does not upload personal information. Before opening registration to real families, the operator needs to decide whether this cross-border storage meets their own obligations. This is not legal advice.</p>
+    <h2>网站分析 Analytics</h2>
+    <p lang="zh-CN">Google Analytics 默认不加载。只有你在这台浏览器里另外同意之后才会加载，并可以拒绝。这和账户里的活动邮件选项是两件事。</p>
+    <p lang="en">Google Analytics does not load unless you accept it in this browser. You can refuse. That choice is separate from the optional outing-email checkbox on an account.</p>
+    <h2>保存期限与删除 Retention and deletion</h2>
+    <p lang="zh-CN">你可以在账户页申请删除。运营者处理后，账户、报名、消息和删除申请会按数据库的级联规则删除。举报只供运营者查看，用来处理安全和滥用问题，不向其他参加者公开。你也可以要求查看或更正自己的资料。</p>
+    <p lang="en">You can request deletion from the account page. After the operator processes it, the account, registrations, messages, and the deletion request are removed under the database cascade rules. Reports are visible only to the operator for safety and abuse handling. You can also ask to access or correct your information.</p>
     ${contactLine()}
   </article></section>`
 }));

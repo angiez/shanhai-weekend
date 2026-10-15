@@ -104,5 +104,12 @@ test("two accounts cannot read chat until both join, and outsiders stay out", as
   await asUser(db, A, "update public.activities set status = 'cancelled' where id = $1", [ACT]);
   const afterCancel = await asUser(db, A, "select public.chat_open($1) as open", [ACT]);
   assert.equal(afterCancel.rows[0].open, false);
+  await asUser(db, A, "insert into public.deletion_requests (user_id) values ($1)", [A]);
+  const ownRequest = await asUser(db, A, "select user_id from public.deletion_requests");
+  assert.equal(ownRequest.rows.length, 1);
+  const hiddenRequest = await asUser(db, B, "select user_id from public.deletion_requests");
+  assert.equal(hiddenRequest.rows.length, 0);
+  await fails(db, B, "insert into public.deletion_requests (user_id) values ($1)", [A]);
+
   await db.close();
 });

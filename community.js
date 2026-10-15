@@ -2,11 +2,22 @@ const cfg = window.SHANHAI_PUBLIC || {};
 const rules = window.SHANHAI_RULES;
 
 let client = null;
+let recoveryMode = false;
 async function db() {
   if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return null;
   if (!client) {
     const mod = await import("https://esm.sh/@supabase/supabase-js@2.45.4");
-    client = mod.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    client = mod.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage
+      }
+    });
+    client.auth.onAuthStateChange(function (event) {
+      if (event === "PASSWORD_RECOVERY") recoveryMode = true;
+    });
   }
   return client;
 }
@@ -26,11 +37,36 @@ function configured() {
   return Boolean(cfg.supabaseUrl && cfg.supabaseAnonKey);
 }
 
+function authMessage(error) {
+  const msg = (error && error.message) || "";
+  if (/already registered|already been registered/i.test(msg)) return "这个邮箱已经注册。请登录，或使用忘记密码。This email is already registered. Sign in or reset the password.";
+  if (/email not confirmed/i.test(msg)) return "请先打开验证邮件里的链接。Confirm your email before signing in.";
+  if (/invalid login|invalid credentials/i.test(msg)) return "邮箱或密码不正确。Email or password is incorrect.";
+  if (/password/i.test(msg) && /at least|weak|short/i.test(msg)) return "密码至少 8 位。Use at least 8 characters.";
+  if (/rate limit/i.test(msg)) return "尝试太频繁，请稍后再试。Too many attempts. Please wait and try again.";
+  return msg || "没有完成。请再试一次。Something went wrong. Please try again.";
+}
+
 async function sessionUser() {
   const supabase = await db();
   if (!supabase) return null;
-  const { data } = await supabase.auth.getSession();
-  return data.session ? data.session.user : null;
+  const { data: sessionData } = await supabase.auth.getSession();
+  if (!sessionData.session) return null;
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) {
+    await supabase.auth.signOut({ scope: "local" });
+    return null;
+  }
+  return data.user;
+}
+
+async function joinedActivities(user) {
+  const { data: regs, error } = await (await db()).from("registrations").select("activity_id").eq("user_id", user.id).eq("status", "confirmed");
+  if (error) return { error: error, rows: [] };
+  const ids = (regs || []).map(function (row) { return row.activity_id; });
+  if (!ids.length) return { error: null, rows: [] };
+  const { data, error: activityError } = await (await db()).from("activities").select("id,title,place_label,starts_at,status").in("id", ids);
+  return { error: activityError, rows: data || [] };
 }
 
 function accountLinks() {
@@ -56,17 +92,16 @@ async function renderAccount(root) {
     showSetup(root);
     return;
   }
+  const params = new URLSearchParams(location.search);
+  const urlError = params.get("error_description");
+  if (urlError) root.append(el("p", "note", urlError));
   const user = await sessionUser();
+  if (user && (recoveryMode || location.hash.indexOf("type=recovery") !== -1)) {
+    renderNewPassword(root);
+    return;
+  }
   if (user) {
-    const { data: profile } = await (await db()).from("profiles").select("display_name").eq("id", user.id).maybeSingle();
-    root.append(el("p", "", "已登录 Signed in: " + ((profile && profile.display_name) || user.email || "")));
-    const out = el("button", "btn ghost", "退出 Sign out");
-    out.type = "button";
-    out.addEventListener("click", async function () {
-      await (await db()).auth.signOut();
-      location.href = "/account/";
-    });
-    root.append(out);
+    await renderSignedIn(root, user);
     return;
   }
   const form = el("form", "stack");
@@ -96,7 +131,7 @@ async function renderAccount(root) {
         }
       }
     });
-    text(msg, error ? error.message : "如果邮箱需要验证，请打开邮件里的链接后再登录。Check your email if confirmation is required.");
+    text(msg, error ? authMessage(error) : "如果邮箱需要验证，请打开邮件里的链接后再登录。Check your email if confirmation is required.");
   });
   form.querySelector("#sign-in").addEventListener("click", async function () {
     const data = new FormData(form);
@@ -104,10 +139,93 @@ async function renderAccount(root) {
       email: data.get("email"),
       password: data.get("password")
     });
-    text(msg, error ? error.message : "已登录。Signed in.");
+    text(msg, error ? authMessage(error) : "已登录。Signed in.");
     if (!error) renderAccount(root);
   });
+  const forgot = el("button", "btn ghost", "忘记密码 Reset password");
+  forgot.type = "button";
+  forgot.addEventListener("click", async function () {
+    const email = new FormData(form).get("email");
+    if (!email) {
+      text(msg, "请先填写邮箱。Enter your email first.");
+      return;
+    }
+    const { error } = await (await db()).auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/account/" });
+    text(msg, error ? authMessage(error) : "如果这个邮箱已注册，你会收到重置链接。If this email is registered, a reset link is on its way.");
+  });
+  form.append(forgot);
   root.append(form);
+}
+
+function renderNewPassword(root) {
+  const form = el("form", "stack");
+  form.innerHTML = '<h2>设置新密码</h2><label>新密码 New password<input name="password" type="password" required minlength="8" autocomplete="new-password"></label><button class="btn sea" type="submit">保存 Save</button><p id="account-msg"></p>';
+  const msg = form.querySelector("#account-msg");
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const { error } = await (await db()).auth.updateUser({ password: new FormData(form).get("password") });
+    text(msg, error ? authMessage(error) : "密码已更新。Password updated.");
+    if (!error) {
+      recoveryMode = false;
+      history.replaceState(null, "", "/account/");
+      renderAccount(root);
+    }
+  });
+  root.append(form);
+}
+
+async function renderSignedIn(root, user) {
+  const { data: profile } = await (await db()).from("profiles").select("display_name").eq("id", user.id).maybeSingle();
+  root.append(el("p", "", "已登录 Signed in: " + ((profile && profile.display_name) || "家人")));
+  root.append(el("p", "meta", "邮箱只保存在账户服务里，其他参加者看不到。Your email stays in the account service and is not shown to other participants."));
+  const nameForm = el("form", "stack");
+  nameForm.innerHTML = '<label>显示名 Display name<input name="name" required maxlength="40" autocomplete="nickname"></label><button class="btn sea" type="submit">保存显示名 Save name</button><p id="name-msg"></p>';
+  nameForm.querySelector("input").value = (profile && profile.display_name) || "";
+  nameForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const name = new FormData(nameForm).get("name");
+    const { error } = await (await db()).from("profiles").update({ display_name: name }).eq("id", user.id);
+    text(nameForm.querySelector("#name-msg"), error ? authMessage(error) : "已保存。Saved.");
+  });
+  root.append(nameForm);
+  const mine = el("div", "panel");
+  mine.append(el("h2", "", "我参加的 Joined"));
+  const joined = await joinedActivities(user);
+  if (joined.error) mine.append(el("p", "note", authMessage(joined.error)));
+  else if (!joined.rows.length) mine.append(el("p", "", "你还没有参加活动。You have not joined an activity."));
+  else joined.rows.forEach(function (activity) {
+    const link = el("a");
+    link.href = "/activities/view/?id=" + encodeURIComponent(activity.id);
+    link.textContent = activity.title + (activity.status === "cancelled" ? " · 已取消 Cancelled" : "");
+    const row = el("p", "");
+    row.append(link);
+    mine.append(row);
+  });
+  root.append(mine);
+  const password = el("form", "stack");
+  password.innerHTML = '<label>修改密码 New password<input name="password" type="password" required minlength="8" autocomplete="new-password"></label><button class="btn ghost" type="submit">更新密码 Update password</button><p id="password-msg"></p>';
+  password.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const { error } = await (await db()).auth.updateUser({ password: new FormData(password).get("password") });
+    text(password.querySelector("#password-msg"), error ? authMessage(error) : "密码已更新。Password updated.");
+    if (!error) password.reset();
+  });
+  root.append(password);
+  const remove = el("button", "btn ghost", "申请删除账户 Request deletion");
+  remove.type = "button";
+  const removeMsg = el("p", "");
+  remove.addEventListener("click", async function () {
+    const { error } = await (await db()).from("deletion_requests").insert({ user_id: user.id });
+    text(removeMsg, error && !/duplicate|unique/i.test(error.message) ? authMessage(error) : "已记录删除申请。运营者会删除账户，相关报名和消息会一并删除。Deletion requested. The operator will delete the account and its registrations and messages.");
+  });
+  root.append(remove, removeMsg);
+  const out = el("button", "btn ghost", "退出 Sign out");
+  out.type = "button";
+  out.addEventListener("click", async function () {
+    await (await db()).auth.signOut({ scope: "local" });
+    location.href = "/account/";
+  });
+  root.append(out);
 }
 
 async function renderActivities(root) {
@@ -120,7 +238,22 @@ async function renderActivities(root) {
   }
   const user = await sessionUser();
   root.append(accountLinks());
-  if (user) root.append(createForm(user));
+  if (user) {
+    const mine = el("div", "panel");
+    mine.append(el("h2", "", "我参加的 Joined"));
+    const joined = await joinedActivities(user);
+    if (joined.error) mine.append(el("p", "note", authMessage(joined.error)));
+    else if (!joined.rows.length) mine.append(el("p", "", "你还没有参加活动。You have not joined an activity."));
+    else joined.rows.forEach(function (activity) {
+      const link = el("a");
+      link.href = "/activities/view/?id=" + encodeURIComponent(activity.id);
+      link.textContent = activity.title;
+      const row = el("p", "");
+      row.append(link);
+      mine.append(row);
+    });
+    root.append(mine, createForm(user));
+  }
   const list = el("div", "grid");
   root.append(list);
   const { data, error } = await (await db()).from("activities").select("id,title,place_label,starts_at,meeting_point,capacity,status").order("starts_at");

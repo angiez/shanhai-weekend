@@ -283,6 +283,26 @@ grant select, insert on table public.messages to authenticated;
 grant select, insert on table public.blocks to authenticated;
 grant insert on table public.reports to authenticated;
 
+create table if not exists public.deletion_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (user_id)
+);
+
+alter table public.deletion_requests enable row level security;
+
+drop policy if exists deletion_insert on public.deletion_requests;
+create policy deletion_insert on public.deletion_requests
+  for insert to authenticated with check (user_id = auth.uid());
+
+drop policy if exists deletion_select on public.deletion_requests;
+create policy deletion_select on public.deletion_requests
+  for select to authenticated using (user_id = auth.uid());
+
+revoke all on table public.deletion_requests from public, anon;
+grant select, insert on table public.deletion_requests to authenticated;
+
 revoke all on function public.confirmed_count(uuid) from public, anon;
 revoke all on function public.is_confirmed(uuid) from public, anon;
 revoke all on function public.chat_open(uuid) from public, anon;

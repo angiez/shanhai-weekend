@@ -50,8 +50,8 @@ test("public pages keep canonical URLs, sitemap entries, and bilingual markup", 
   assert.match(home, /inLanguage":\["zh-CN","en-CA"\]/);
   assert.match(home, /media="print"/);
   assert.match(home, /google-site-verification" content="verifyToken123"/);
-  assert.match(home, /G-TEST1234/);
-  assert.match(home, /anonymize_ip:true/);
+  assert.match(home, /"gaId":"G-TEST1234"/);
+  assert.doesNotMatch(home, /googletagmanager\.com/);
   assert.match(home, new RegExp(anonKey.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 
   const stanley = fs.readFileSync(path.join(dist, "place", "stanley", "index.html"), "utf8");
@@ -84,6 +84,10 @@ test("public pages keep canonical URLs, sitemap entries, and bilingual markup", 
   const guidelines = fs.readFileSync(path.join(dist, "guidelines", "index.html"), "utf8");
   assert.match(guidelines, /私人住宅/);
   assert.match(guidelines, /未成年人/);
+  const privacy = fs.readFileSync(path.join(dist, "privacy", "index.html"), "utf8");
+  assert.match(privacy, /us-east-1/);
+  assert.match(privacy, /GoHighLevel/);
+  assert.match(privacy, /Google Analytics/);
   const client = fs.readFileSync(path.join(dist, "community.js"), "utf8");
   assert.equal(client.includes('.from("reports").select'), false);
   assert.match(client, /只有已报名的参加者可以进入群聊/);

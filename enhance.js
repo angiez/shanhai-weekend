@@ -154,4 +154,53 @@
   persist();
   apply();
   renderSaved();
+  setupAnalytics();
 })();
+
+function setupAnalytics() {
+  const cfg = window.SHANHAI_PUBLIC || {};
+  const id = cfg.gaId || "";
+  if (!/^G-[A-Z0-9]+$/.test(id)) return;
+  const choice = localStorage.getItem("shanhai-analytics");
+  if (choice === "yes") {
+    loadAnalytics(id);
+    return;
+  }
+  if (choice === "no") return;
+  const bar = document.createElement("div");
+  bar.className = "note";
+  bar.style.margin = "16px";
+  bar.innerHTML = "<p>可以用 Google Analytics 了解页面是否被人打开。默认不加载，也和结伴邮件无关。</p><p lang=\"en\">Google Analytics can record that a page was opened. It stays off unless you accept, and it is separate from outing emails.</p>";
+  const yes = document.createElement("button");
+  yes.type = "button";
+  yes.className = "btn sea";
+  yes.textContent = "同意 Analytics Accept";
+  const no = document.createElement("button");
+  no.type = "button";
+  no.className = "btn ghost";
+  no.textContent = "拒绝 Decline";
+  yes.addEventListener("click", function () {
+    localStorage.setItem("shanhai-analytics", "yes");
+    bar.remove();
+    loadAnalytics(id);
+  });
+  no.addEventListener("click", function () {
+    localStorage.setItem("shanhai-analytics", "no");
+    bar.remove();
+  });
+  bar.append(yes, document.createTextNode(" "), no);
+  document.body.append(bar);
+}
+
+function loadAnalytics(id) {
+  if (window.__shanhaiGa) return;
+  window.__shanhaiGa = true;
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(id);
+  document.head.append(script);
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  gtag("js", new Date());
+  gtag("config", id, { anonymize_ip: true });
+}
