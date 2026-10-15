@@ -37,8 +37,11 @@
     });
   }
 
-  function canPost(activity, registrations, userId) {
-    return canReadChat(activity, registrations, userId);
+  function canPost(activity, registrations, userId, blocks) {
+    if (!canReadChat(activity, registrations, userId)) return false;
+    return confirmed(registrations).some(function (row) {
+      return row.userId !== userId && !hiddenByBlock(row.userId, userId, blocks);
+    });
   }
 
   return { confirmed: confirmed, chatUnlocked: chatUnlocked, canRegister: canRegister, canReadChat: canReadChat, canPost: canPost, hiddenByBlock: hiddenByBlock };

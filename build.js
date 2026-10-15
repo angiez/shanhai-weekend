@@ -163,7 +163,10 @@ function page({ title, description, url, jsonld, main, nav, extraHead = "", extr
   <meta property="og:url" content="${esc(url)}" />
   <meta property="og:locale" content="zh_CN" />
   <meta property="og:locale:alternate" content="en_CA" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="${SITE_URL}/images/og-share.webp" />
+  <meta property="og:image:alt" content="Illustration of families on a waterfront path. Not a photograph of a specific place or of real members." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="${SITE_URL}/images/og-share.webp" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -225,6 +228,44 @@ function page({ title, description, url, jsonld, main, nav, extraHead = "", extr
 </html>`;
 }
 
+const HERO = { src: "/images/hero-waterfront.webp", w: 1600, h: 900 };
+const SCENES = {
+  water: { src: "/images/scene-friends.webp", w: 960, h: 720 },
+  market: { src: "/images/scene-market.webp", w: 960, h: 720 },
+  hike: { src: "/images/scene-hike.webp", w: 960, h: 720 },
+  plan: { src: "/images/scene-planning.webp", w: 960, h: 720 }
+};
+
+function sceneForPlace(p) {
+  if (p.cat === "hike" || p.cat === "animal") return SCENES.hike;
+  if (p.cat === "food" || p.cat === "walk") return SCENES.market;
+  if (p.cat === "park" || p.cat === "water") return SCENES.water;
+  return SCENES.plan;
+}
+
+function sceneForCity(city) {
+  if (city.id === "richmond") return SCENES.market;
+  if (["northvan", "squamish", "whistler", "hope", "mapleridge", "mission", "chilliwack", "harrison"].includes(city.id)) return SCENES.hike;
+  if (["vancouver", "westvan", "bowen", "whiterock", "victoria", "bellingham", "delta"].includes(city.id)) return SCENES.water;
+  return SCENES.plan;
+}
+
+function illustration(scene, alt, caption, eager) {
+  return `<figure class="illustration${eager ? " hero-photo" : ""}">
+    <img src="${scene.src}" width="${scene.w}" height="${scene.h}" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">
+    ${caption ? `<figcaption>${esc(caption)}</figcaption>` : ""}
+  </figure>`;
+}
+
+function ctaBand() {
+  return `<nav class="cta-band" aria-label="行动 Action">
+    <a href="/"><strong>发现周末好去处</strong><span lang="en">Discover Weekend Adventures</span></a>
+    <a href="/activities/"><strong>找人一起出发</strong><span lang="en">Find People to Explore With</span></a>
+    <a href="/account/"><strong>免费报名参加</strong><span lang="en">Join an Activity for Free</span></a>
+    <a href="/activities/"><strong>一起规划行程</strong><span lang="en">Plan Your Weekend Together</span></a>
+  </nav>`;
+}
+
 function card(p) {
   const c = cityBy(p.city);
   const en = enPlace(p);
@@ -232,6 +273,7 @@ function card(p) {
   return `<article class="card" data-city="${esc(p.city)}" data-cat="${esc(p.cat)}" data-cost="${p.cost}" data-indoor="${p.indoor ? "1" : "0"}" data-stroller="${p.stroller ? "1" : "0"}" data-open="${isOpen(p) ? "1" : "0"}" data-blob="${esc(blob.toLowerCase())}">
     <button class="save" type="button" data-save="${esc(p.id)}">想去 Save</button>
     <a class="card-link" href="/place/${esc(p.id)}/">
+      <img class="card-photo" src="${sceneForPlace(p).src}" width="${sceneForPlace(p).w}" height="${sceneForPlace(p).h}" alt="${esc("插画：" + catZh(p.cat) + "氛围，不是" + p.zh + "的实拍照片。Illustration of a " + CAT_EN[p.cat] + " outing, not a photograph of " + p.en + ".")}" loading="lazy" decoding="async">
       <div class="badges"><span class="badge${isBest(p) ? " hot" : ""}">${esc(seasonZh(p))} / ${esc(seasonEn(p))}</span><span class="badge${p.cost === 0 ? " free" : " dim"}">${esc(COST_ZH[p.cost])} / ${esc(COST_EN[p.cost])}</span>${p.indoor ? '<span class="badge dim">室内 Indoor</span>' : ""}</div>
       <h3 lang="zh-CN">${esc(p.zh)}</h3>
       <p class="en" lang="en">${esc(p.en)} · ${esc(c.zh)} ${esc(c.en)}</p>
@@ -276,14 +318,17 @@ function homeMain() {
     return `<section class="region"><header><h3>${esc(r.zh)}</h3><small>${esc(r.en)}</small></header><div class="city-row">${chips}</div></section>`;
   }).join("");
   const routes = SITE.routes.slice(0, 4).map((r, i) => routeCard(r, i)).join("");
-  return `<section class="hero"><div class="wrap hero-grid"><div>
+  return `<section class="hero"><div class="wrap">
+    ${illustration(HERO, "插画：家人沿着海边步道散步。这不是某一处景点的实拍照片，也不是真实会员。Illustration of a family walking a waterfront path. This is not a photograph of a specific place or of real members.", "插画示意，不是某一处景点或真实会员的照片。Illustration, not a photograph of a specific place or of real members.", true)}
+    <div class="hero-grid"><div>
     <p class="kicker">${month}月 · October · 大温 Greater Vancouver</p>
     <h1>山海周末</h1>
     <p class="lede" lang="zh-CN">从史提夫斯顿的码头走到格罗斯山的雪线。按城市找公园、博物馆、农场和一日游，下雨也有地方去。</p>
     <p class="alt-lang" lang="en">From the Steveston docks to the snowline on Grouse. Find parks, museums, farms, and day trips by city, including places that still work in the rain.</p>
     <div class="hero-actions"><a class="btn sea" href="/routes/">看十二条路线 12 routes</a><a class="btn ghost" href="/rain/">下雨的时候 Rainy days</a></div>
+    ${ctaBand()}
     <ul class="stats"><li><strong>${SITE.places.length}</strong><span>个地方 places</span></li><li><strong>${SITE.cities.length}</strong><span>座城市 cities</span></li><li><strong>${SITE.routes.length}</strong><span>条路线 routes</span></li></ul>
-  </div><div class="ticket-stack">${tickets}</div></div></section>
+  </div><div class="ticket-stack">${tickets}</div></div></div></section>
   <section class="section"><div class="wrap"><div class="section-head"><div><h2>先选一座城</h2><p lang="zh-CN">中文地名旁边是英文地名。</p><p class="alt-lang" lang="en">Every city is labeled in Chinese and English.</p></div></div><div class="regions">${regions}</div></div></section>
   <section class="section"><div class="wrap"><div class="section-head"><div><h2>全部地方 All places</h2><p lang="zh-CN">当季的排在前面。票价和开放日出门前再确认一次。</p><p class="alt-lang" lang="en">In-season places come first. Confirm prices and hours before you go.</p></div></div>
   ${filters("")}<p class="result-line" id="result-line">${SITE.places.length} 个地方 places</p><div class="grid" id="place-grid">${SITE.places.map(card).join("")}</div></div></section>
@@ -299,7 +344,9 @@ function routeCard(r, i) {
 function cityMain(city) {
   const en = COPY.cities[city.id];
   const list = SITE.places.filter((p) => p.city === city.id);
+  const scene = sceneForCity(city);
   return `<section class="section"><div class="wrap">
+    ${illustration(scene, "插画：" + city.zh + "一带的周末氛围，不是这座城市的实拍照片。Illustration of a weekend in the " + city.en + " area, not a photograph of the city.", "插画示意，不是这座城市的实拍。Illustration, not a photograph of this city.")}
     <article class="city-guide" id="city-guide">
       <div>
         <p class="en">${esc(city.en)}</p>
@@ -347,6 +394,7 @@ function placeMain(p) {
     <h1 lang="zh-CN">${esc(p.zh)}</h1><p class="en" lang="en">${esc(p.en)}</p>
     <p class="lede" lang="zh-CN">${esc(p.summary)}</p><p class="alt-lang" lang="en">${esc(en.summary)}</p>
     <div class="place-actions"><button class="btn sea" type="button" data-save="${esc(p.id)}">放进想去 Save</button><a class="btn ghost" href="/activities/?place=${esc(p.id)}">约人一起去 Plan an outing</a><a class="btn ghost" href="/city/${esc(c.id)}/">这座城的其他地方 More in this city</a></div></div>
+    ${illustration(sceneForPlace(p), "插画：" + catZh(p.cat) + "氛围，不是" + p.zh + "的实拍照片。Illustration of a " + CAT_EN[p.cat] + " outing, not a photograph of " + p.en + ".", "插画示意，不是" + p.zh + " " + p.en + "的实拍照片。Illustration, not a photograph of this place.")}
     ${p.id === "stanley" ? seawallNotice() : ""}
     ${note}
     <div class="detail-layout"><article class="panel">
@@ -403,6 +451,7 @@ write("index.html", page({
     name: "山海周末 Shanhai Weekend",
     url: SITE_URL + "/",
     description: homeDesc,
+    image: SITE_URL + "/images/og-share.webp",
     inLanguage: ["zh-CN", "en-CA"]
   },
   main: homeMain()
@@ -540,7 +589,14 @@ write("activities/index.html", page({
   nav: "activities",
   extraFoot: communityFoot,
   jsonld: { "@context": "https://schema.org", "@type": "CollectionPage", name: "结伴出门 Activities", url: SITE_URL + "/activities/" },
-  main: `<section class="section"><div class="wrap"><h1>结伴出门</h1><div id="activity-list"></div></div></section>`
+  main: `<section class="section"><div class="wrap">
+    ${illustration(SCENES.plan, "插画：几位朋友在公园里一起看地图，规划周末出门。不是真实会员的照片。Illustration of friends looking at a map and planning a weekend outing. Not a photograph of real members.", "插画示意，不是真实会员。Illustration, not a photograph of real members.")}
+    <h1>结伴出门</h1>
+    <p class="lede" lang="zh-CN">浏览地点和公开活动不需要账户。第一位参加者加入后，群聊仍然锁着。第二位不同的人确认报名后，群聊才会打开。集合点只给已报名的人看。</p>
+    <p class="alt-lang" lang="en">You can browse places and public activities without an account. Chat stays locked after the first person joins. It opens when a second, different person confirms. The meeting point is shown only to people who joined.</p>
+    ${ctaBand()}
+    <div id="activity-list"></div>
+  </div></section>`
 }));
 write("activities/view/index.html", page({
   title: "结伴活动 Activity | 山海周末",
@@ -560,7 +616,14 @@ write("account/index.html", page({
   robots: "noindex, follow",
   extraFoot: communityFoot,
   jsonld: { "@context": "https://schema.org", "@type": "WebPage", name: "账户 Account", url: SITE_URL + "/account/" },
-  main: `<section class="section"><div class="wrap"><h1>账户 Account</h1><div id="account-root"></div></div></section>`
+  main: `<section class="section"><div class="wrap">
+    ${illustration(SCENES.water, "插画：朋友和家人一起在水边散步。不是真实会员的照片。Illustration of friends and family walking by the water. Not a photograph of real members.", "插画示意，不是真实会员。Illustration, not a photograph of real members.")}
+    <h1>账户 Account</h1>
+    <p class="lede" lang="zh-CN">看地点、地图和路线不需要注册。免费报名要等加拿大的账户服务接上之后才能用。</p>
+    <p class="alt-lang" lang="en">Places, the map, and routes do not need an account. Free joining waits until the Canadian account service is connected.</p>
+    ${ctaBand()}
+    <div id="account-root"></div>
+  </div></section>`
 }));
 write("privacy/index.html", page({
   title: "隐私说明 Privacy | 山海周末",
@@ -578,8 +641,8 @@ write("privacy/index.html", page({
     <p lang="zh-CN">注册和群聊现在没有开放。将来开放后，才会保存邮箱、显示名、报名和已解锁群聊里的消息。这些资料不会对公众公开。邮箱不会展示给其他参加者。密码由账户服务保存，网站页面不保存密码明文。</p>
     <p lang="en">Registration and chat are not open. If they open later, the account service would store an email, display name, registrations, and messages from an unlocked chat. Those records are not public. An email is not shown to other participants. The website does not keep a plaintext password.</p>
     <h2>群聊 Chat</h2>
-    <p lang="zh-CN">群聊在第二位不同的参加者确认报名后才打开。只有这次活动的已报名参加者能读消息。举报只交给运营者。你可以屏蔽另一位参加者。</p>
-    <p lang="en">Chat opens after a second, different person confirms. Only confirmed participants of that activity can read messages. Reports go to the operator. You can block another participant.</p>
+    <p lang="zh-CN">群聊在第二位不同的参加者确认报名后才打开。只有这次活动的已报名参加者能读消息。实时连接在下一条消息时重新核对同一条规则：退出、取消活动，或已经看不到任何未屏蔽的参加者之后，新消息不再送达。两人互相屏蔽时，双方都看不到对方的消息；如果还有其他已报名的参加者，他们仍可以继续聊天。举报只交给运营者，其他参加者看不到，并应在 12 个月内删除。</p>
+    <p lang="en">Chat opens after a second, different person confirms. Only confirmed participants of that activity can read messages. A live subscription is checked again on the next message. After someone leaves, the activity is cancelled, or a person has no unblocked participant left, new messages are not delivered. A block hides that pair in both directions. Other confirmed participants can keep chatting. Reports go only to the operator, are not shown to other participants, and should be deleted after 12 months.</p>
     <h2>营销邮件 Marketing email</h2>
     <p lang="zh-CN">活动通知邮件默认不发送，并且和报名是分开的。只有你另外勾选之后才会收到，并可以要求停止。网站没有把任何人同步到 GoHighLevel 或其他营销系统。这是为了符合加拿大反垃圾邮件法（CASL）。</p>
     <p lang="en">Outing emails are off unless you opt in separately from joining an activity. You can ask to stop them. The site does not synchronize anyone to GoHighLevel or another marketing system. This is meant to meet Canada's anti-spam law.</p>
@@ -590,8 +653,8 @@ write("privacy/index.html", page({
     <p lang="zh-CN">Google Analytics 默认不加载。只有你在这台浏览器里另外同意之后才会加载，并可以拒绝。这和账户里的活动邮件选项是两件事。</p>
     <p lang="en">Google Analytics does not load unless you accept it in this browser. You can refuse. That choice is separate from the optional outing-email checkbox on an account.</p>
     <h2>保存期限与删除 Retention and deletion</h2>
-    <p lang="zh-CN">你可以在账户页申请删除。运营者处理后，账户、报名、消息和删除申请会按数据库的级联规则删除。举报只供运营者查看，用来处理安全和滥用问题，不向其他参加者公开。你也可以要求查看或更正自己的资料。</p>
-    <p lang="en">You can request deletion from the account page. After the operator processes it, the account, registrations, messages, and the deletion request are removed under the database cascade rules. Reports are visible only to the operator for safety and abuse handling. You can also ask to access or correct your information.</p>
+    <p lang="zh-CN">你可以在账户页申请删除。数据库处理和登录关闭是分开的两步，都会写进只有运营者能看的审计记录。登录服务那一步成功之前，删除不算完成。如果那一步失败，运营者会重试登录关闭，而不会把数据库步骤再做一遍。数据库步骤会先停用这个账户，因此报名、群聊和实时消息会在下一次核对时停掉，并删掉该账户自己的报名和群聊消息。如果这个人发起的活动还有其他人参加，活动会被取消，发起人改成最早的另一位参加者。其他人的报名和消息会留下。没有未结案的安全举报时，运营者再用 Supabase 的 Auth Admin API 删除登录并撤销刷新会话；这一步成功之后，资料档案才删除。如果未结案的安全举报涉及这个账户，显示名会被替换，资料会保持锁定，运营者再用 Auth Admin API 软删除登录，使这个人不能再登录。举报和一份只有运营者能看的消息副本会留下，其中包含用户编号和消息正文。这些仍然是个人资料。举报结案时副本会删除；未结案的副本最晚在 12 个月时随举报一起删除。已经发出的访问令牌在过期前技术上仍可能存在，但数据库会立刻拒绝被锁定的账户。网站页面不包含 service role 密钥。</p>
+    <p lang="en">You can request deletion from the account page. Database removal and login closure are separate steps, and both are written to an audit record only the operator can see. Deletion is not fully completed until the login step succeeds. If that step fails, the operator retries the login closure and does not repeat the database removal. The database step blocks the account first, so registrations, chat, and Realtime stop on the next check, and it removes that account's own registrations and chat messages. If the person created an activity that someone else joined, the activity is cancelled and ownership moves to the earliest other participant. Other people's registrations and messages stay. With no open safety report, the operator then deletes the login through Supabase's Auth Admin API, which also revokes refresh sessions. The profile is removed only after that call succeeds. If an open safety report involves the account, the display name is replaced and the profile stays blocked. The operator soft-deletes the login through the Auth Admin API so the person cannot sign in. The report and a private copy of the reported message are kept, including the user id and the message text. That copy is still personal information. Only the operator can see it. The copy is deleted when the report is resolved. An unresolved copy is deleted with the report after 12 months. An access token that was already issued can remain technically valid until it expires, but the database rejects the blocked account immediately. The website does not contain the service-role key.</p>
     ${contactLine()}
   </article></section>`
 }));
@@ -653,6 +716,7 @@ write("places.json", JSON.stringify(SITE.places.map((p) => ({ id: p.id, zh: p.zh
 ["styles.css", "favicon.svg", "enhance.js", "map.js", "community.js", "community-rules.js"].forEach((file) => {
   fs.copyFileSync(path.join(root, file), path.join(dist, file));
 });
+fs.cpSync(path.join(root, "images"), path.join(dist, "images"), { recursive: true });
 
 const missing = SITE.places.filter((p) => !PLACE_EN[p.id]).map((p) => p.id);
 console.log(`pages ${urls.length} missing-en ${missing.length}`);

@@ -61,6 +61,15 @@ test("a block hides that person's messages and leaves the rest of the room", fun
   const blocks = [{ blockerId: "a", blockedId: "b" }];
   assert.equal(rules.canReadChat(activity, rows, "a"), true);
   assert.equal(rules.canReadChat(activity, rows, "c"), true);
+  assert.equal(rules.canPost(activity, rows, "a", blocks), true);
+  assert.equal(rules.canPost(activity, rows, "b", blocks), true);
+  assert.equal(rules.canPost(activity, rows, "c", blocks), true);
+  const pair = [
+    { userId: "a", status: "confirmed" },
+    { userId: "b", status: "confirmed" }
+  ];
+  assert.equal(rules.canPost(activity, pair, "a", blocks), false);
+  assert.equal(rules.canPost(activity, pair, "b", blocks), false);
   assert.equal(rules.hiddenByBlock("b", "a", blocks), true);
   assert.equal(rules.hiddenByBlock("a", "b", blocks), true);
   assert.equal(rules.hiddenByBlock("c", "a", blocks), false);

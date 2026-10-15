@@ -383,8 +383,36 @@ p { margin: 0; }
   cursor: pointer;
 }
 .save.on { background: var(--persimmon); color: white; border-color: var(--persimmon); }
-.card .save { position: absolute; top: 14px; right: 14px; }
-.card-link { text-decoration: none; display: flex; flex-direction: column; flex: 1; color: inherit; padding-right: 52px; }
+.card .save { position: absolute; top: 14px; right: 14px; z-index: 1; }
+.card-link { text-decoration: none; display: flex; flex-direction: column; flex: 1; color: inherit; }
+.card-photo, .illustration img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+.card-photo { height: 148px; border-radius: 14px; margin-bottom: 10px; }
+.illustration { margin: 0 0 18px; }
+.illustration img { border-radius: 22px; aspect-ratio: 4 / 3; }
+.hero-photo img { aspect-ratio: 16 / 9; max-height: 460px; }
+.illustration figcaption { margin-top: 6px; font-size: 12px; color: var(--ink-soft); }
+.cta-band {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 18px 0 8px;
+}
+.cta-band a {
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 2px;
+}
+.cta-band strong { font-size: 16px; }
+.cta-band span { color: var(--ink-soft); font-size: 13px; }
 .alt-lang { color: var(--ink-soft); margin-top: 6px; }
 .route .alt-lang, .city-guide .alt-lang { color: rgba(246, 241, 230, 0.88); }
 .nav a small, .mobile-nav a small { display: block; font-size: 11px; line-height: 1.2; font-weight: 500; }
@@ -422,7 +450,8 @@ p { margin: 0; }
 .mobile-nav { flex-wrap: wrap; }
 
 @media (max-width: 980px) {
-  .hero-grid, .detail-layout, .regions, .grid, .routes, .about-grid, .city-guide { grid-template-columns: 1fr; }
+  .hero-grid, .detail-layout, .regions, .grid, .routes, .about-grid, .city-guide, .cta-band { grid-template-columns: 1fr 1fr; }
+  .hero-grid, .detail-layout, .regions, .routes, .about-grid, .city-guide { grid-template-columns: 1fr; }
   .grid { grid-template-columns: 1fr 1fr; }
   .nav { display: none; }
   .nav-toggle { display: inline-flex; margin-left: auto; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 12px; }
@@ -445,7 +474,7 @@ p { margin: 0; }
   .brand small { white-space: normal; }
   #outing-map { height: 62vh; min-height: 320px; }
   .section-head { flex-direction: column; align-items: flex-start; }
-  .grid { grid-template-columns: 1fr; }
+  .grid, .cta-band { grid-template-columns: 1fr; }
   .hero h1 { font-size: 40px; }
   .facts { grid-template-columns: 1fr; }
   .ticket { grid-template-columns: 64px 1fr; }

@@ -216,7 +216,7 @@ async function renderSignedIn(root, user) {
   const removeMsg = el("p", "");
   remove.addEventListener("click", async function () {
     const { error } = await (await db()).from("deletion_requests").insert({ user_id: user.id });
-    text(removeMsg, error && !/duplicate|unique/i.test(error.message) ? authMessage(error) : "已记录删除申请。运营者会删除账户，相关报名和消息会一并删除。Deletion requested. The operator will delete the account and its registrations and messages.");
+    text(removeMsg, error && !/duplicate|unique/i.test(error.message) ? authMessage(error) : "已记录删除申请。数据库处理和登录关闭是两步，审计记录只有运营者能看。登录服务那一步成功之前，删除不算完成。如果失败，运营者会重试登录关闭，而不会再删一次资料。未结案的安全举报会保留用户编号和消息正文，这些仍是个人资料，只有运营者能看，直到举报结案或满 12 个月。账户会先被停用，不能再使用报名和群聊。其他人的活动和消息会留下。Deletion requested. Database removal and login closure are separate steps, and the audit record is visible only to the operator. Deletion is not complete until the login step succeeds. If it fails, the operator retries the login closure without deleting the data again. An open safety report keeps the user id and message text. That copy is still personal information, visible only to the operator, until the report is resolved or it is 12 months old. The account is blocked first, so registrations and chat stop. Other people's activities and messages stay.");
   });
   root.append(remove, removeMsg);
   const out = el("button", "btn ghost", "退出 Sign out");
@@ -256,12 +256,12 @@ async function renderActivities(root) {
   }
   const list = el("div", "grid");
   root.append(list);
-  const { data, error } = await (await db()).from("activities").select("id,title,place_label,starts_at,meeting_point,capacity,status").order("starts_at");
+  const { data, error } = await (await db()).from("activities").select("id,title,place_label,starts_at,capacity,status").order("starts_at");
   if (error) {
     list.append(el("p", "note", error.message));
     return;
   }
-  const { data: counts } = await (await db()).from("activity_counts").select("activity_id,participants");
+  const { data: counts } = await (await db()).rpc("participant_counts");
   (data || []).forEach(function (activity) {
     const countRow = (counts || []).find(function (row) { return row.activity_id === activity.id; });
     const names = { length: countRow ? countRow.participants : 0 };
@@ -345,20 +345,22 @@ async function renderActivity(root) {
     showSetup(root);
     return;
   }
-  const { data: activity, error } = await (await db()).from("activities").select("*").eq("id", id).maybeSingle();
+  const { data: activity, error } = await (await db()).from("activities").select("id,title,place_label,starts_at,capacity,status").eq("id", id).maybeSingle();
   if (error || !activity) {
     root.append(el("p", "note", error ? error.message : "找不到这次活动。Activity not found."));
     return;
   }
   root.append(el("h1", "", activity.title));
   root.append(el("p", "", activity.place_label));
-  root.append(el("p", "alt-lang", new Date(activity.starts_at).toLocaleString() + " · " + activity.meeting_point));
   const user = await sessionUser();
+  const { data: meeting } = user ? await (await db()).rpc("participant_meeting", { aid: id }) : { data: null };
+  root.append(el("p", "alt-lang", new Date(activity.starts_at).toLocaleString() + " · " + (meeting || "集合点只对已报名的参加者显示。The meeting point is shown only to people who joined.")));
   const { data: regs } = user
     ? await (await db()).from("registrations").select("user_id,status").eq("activity_id", id)
     : { data: [] };
   const registrations = (regs || []).map(function (row) { return { userId: row.user_id, status: row.status }; });
-  const { data: countRow } = await (await db()).from("activity_counts").select("participants").eq("activity_id", id).maybeSingle();
+  const { data: counts } = await (await db()).rpc("participant_counts");
+  const countRow = (counts || []).find(function (row) { return row.activity_id === id; });
   const participantCount = countRow ? countRow.participants : 0;
   const { data: people } = user
     ? await (await db()).from("activity_people").select("display_name").eq("activity_id", id)
@@ -395,7 +397,8 @@ async function renderActivity(root) {
     });
     root.append(cancel);
   }
-  if (user && user.id === activity.creator_id && activity.status === "open") {
+  const { data: creator } = user ? await (await db()).rpc("caller_is_creator", { aid: id }) : { data: false };
+  if (creator && activity.status === "open") {
     const stop = el("button", "btn ghost", "取消这次活动 Cancel activity");
     stop.type = "button";
     stop.addEventListener("click", async function () {
@@ -415,46 +418,51 @@ async function renderActivity(root) {
   } else {
     const { data: blockRows } = await (await db()).from("blocks").select("blocker_id,blocked_id").eq("blocker_id", user.id);
     const blocks = (blockRows || []).map(function (row) { return { blockerId: row.blocker_id, blockedId: row.blocked_id }; });
-    const log = el("div", "stack");
-    log.id = "chat-log";
-    const form = el("form", "stack");
-    form.innerHTML = '<label>消息 Message<textarea name="body" required maxlength="1000"></textarea></label><button class="btn sea" type="submit">发送 Send</button>';
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
-      const body = String(new FormData(form).get("body") || "").trim();
-      if (!body) return;
-      const { error: postError } = await (await db()).from("messages").insert({ activity_id: id, user_id: user.id, body: body });
-      if (postError) log.append(el("p", "note", postError.message));
-      else form.reset();
-      if (window.Notification && Notification.permission === "default") Notification.requestPermission();
-    });
-    const report = el("button", "btn ghost", "举报 Report");
-    report.type = "button";
-    report.addEventListener("click", async function () {
-      const reason = window.prompt("请写下举报原因 Reason");
-      if (!reason) return;
-      await (await db()).from("reports").insert({ reporter_id: user.id, activity_id: id, reason: reason.slice(0, 500) });
-      chat.append(el("p", "", "已提交给运营者，其他参加者看不到这条举报。Report sent privately."));
-    });
-    chat.append(log, form, report);
-    const { data: messages } = await (await db()).from("messages").select("id,user_id,body,created_at").eq("activity_id", id).order("created_at");
-    (messages || []).forEach(function (message) {
-      if (!rules.hiddenByBlock(message.user_id, user.id, blocks)) appendMessage(log, message, user.id, blocks);
-    });
-    liveChannel = (await db()).channel("activity-" + id);
-    liveChannel.on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "activity_id=eq." + id }, function (payload) {
-      if (!payload.new || payload.new.activity_id !== id) return;
-      if (rules.hiddenByBlock(payload.new.user_id, user.id, blocks)) return;
-      appendMessage(log, payload.new, user.id, blocks);
-      if (payload.new.user_id !== user.id && document.hidden && window.Notification && Notification.permission === "granted") {
-        new Notification("山海周末", { body: "结伴群里有一条新消息。A new activity message." });
-      }
-    }).subscribe();
+    const { data: paused } = await (await db()).rpc("messages_paused", { aid: id });
+    if (paused) {
+      chat.append(el("p", "", "你和其余参加者已互相屏蔽，暂时不能收发消息。A block covers the other participants, so this chat stays closed."));
+    } else {
+      const log = el("div", "stack");
+      log.id = "chat-log";
+      const form = el("form", "stack");
+      form.innerHTML = '<label>消息 Message<textarea name="body" required maxlength="1000"></textarea></label><button class="btn sea" type="submit">发送 Send</button>';
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const body = String(new FormData(form).get("body") || "").trim();
+        if (!body) return;
+        const { error: postError } = await (await db()).from("messages").insert({ activity_id: id, user_id: user.id, body: body });
+        if (postError) log.append(el("p", "note", postError.message));
+        else form.reset();
+        if (window.Notification && Notification.permission === "default") Notification.requestPermission();
+      });
+      const report = el("button", "btn ghost", "举报 Report");
+      report.type = "button";
+      report.addEventListener("click", async function () {
+        const reason = window.prompt("请写下举报原因 Reason");
+        if (!reason) return;
+        await (await db()).from("reports").insert({ reporter_id: user.id, activity_id: id, reason: reason.slice(0, 500) });
+        chat.append(el("p", "", "已提交给运营者，其他参加者看不到这条举报。Report sent privately."));
+      });
+      chat.append(log, form, report);
+      const { data: messages } = await (await db()).from("messages").select("id,user_id,body,created_at").eq("activity_id", id).order("created_at");
+      (messages || []).forEach(function (message) {
+        if (!rules.hiddenByBlock(message.user_id, user.id, blocks)) appendMessage(log, message, user.id, blocks, id);
+      });
+      liveChannel = (await db()).channel("activity-" + id);
+      liveChannel.on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "activity_id=eq." + id }, function (payload) {
+        if (!payload.new || payload.new.activity_id !== id) return;
+        if (rules.hiddenByBlock(payload.new.user_id, user.id, blocks)) return;
+        appendMessage(log, payload.new, user.id, blocks, id);
+        if (payload.new.user_id !== user.id && document.hidden && window.Notification && Notification.permission === "granted") {
+          new Notification("山海周末", { body: "结伴群里有一条新消息。A new activity message." });
+        }
+      }).subscribe();
+    }
   }
   root.append(chat);
 }
 
-function appendMessage(log, message, myId, blocks) {
+function appendMessage(log, message, myId, blocks, aid) {
   const row = el("p", "");
   row.dataset.author = message.user_id;
   row.append(el("strong", "", message.user_id === myId ? "我 Me" : "参加者"));
@@ -465,6 +473,14 @@ function appendMessage(log, message, myId, blocks) {
     block.addEventListener("click", async function () {
       await (await db()).from("blocks").insert({ blocker_id: myId, blocked_id: message.user_id });
       blocks.push({ blockerId: myId, blockedId: message.user_id });
+      const { data: paused } = await (await db()).rpc("messages_paused", { aid: aid });
+      if (paused) {
+        await closeChannel();
+        log.replaceChildren(el("p", "", "你和其余参加者已互相屏蔽，暂时不能收发消息。A block covers the other participants, so this chat stays closed."));
+        const panel = log.parentElement;
+        if (panel) panel.querySelectorAll("form, button").forEach(function (node) { node.remove(); });
+        return;
+      }
       log.querySelectorAll("[data-author]").forEach(function (item) {
         if (item.dataset.author === message.user_id) item.remove();
       });
