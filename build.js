@@ -41,7 +41,8 @@ const PUBLIC = {
   supabaseUrl: process.env.SUPABASE_URL || "",
   supabaseAnonKey: publicAnonKey(),
   gaId: /^G-[A-Z0-9]+$/.test(process.env.GA_MEASUREMENT_ID || "") ? process.env.GA_MEASUREMENT_ID : "",
-  contactEmail: process.env.CONTACT_EMAIL || ""
+  contactEmail: process.env.CONTACT_EMAIL || "",
+  siteVerification: /^[A-Za-z0-9_-]{8,128}$/.test(process.env.GOOGLE_SITE_VERIFICATION || "") ? process.env.GOOGLE_SITE_VERIFICATION : ""
 };
 const SITE = loadSite();
 const month = new Date().getMonth() + 1;
@@ -131,7 +132,7 @@ function seasonSentence(p) {
   return { zh, en };
 }
 
-function page({ title, description, url, jsonld, main, nav, extraHead = "", extraFoot = "" }) {
+function page({ title, description, url, jsonld, main, nav, extraHead = "", extraFoot = "", robots = "index, follow" }) {
   return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -140,7 +141,7 @@ function page({ title, description, url, jsonld, main, nav, extraHead = "", extr
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}" />
   <link rel="canonical" href="${esc(url)}" />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="${esc(robots)}" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="山海周末 Shanhai Weekend" />
   <meta property="og:title" content="${esc(title)}" />
@@ -152,9 +153,12 @@ function page({ title, description, url, jsonld, main, nav, extraHead = "", extr
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" /></noscript>
   <link rel="stylesheet" href="/styles.css" />
-  ${PUBLIC.gaId ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(PUBLIC.gaId)}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config',${JSON.stringify(PUBLIC.gaId)});</script>` : ""}
+  ${PUBLIC.gaId ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${esc(PUBLIC.gaId)}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config',${JSON.stringify(PUBLIC.gaId)},{anonymize_ip:true});</script>` : ""}
+  ${PUBLIC.siteVerification ? `<meta name="google-site-verification" content="${esc(PUBLIC.siteVerification)}" />` : ""}
   <script>window.SHANHAI_PUBLIC=${JSON.stringify({ supabaseUrl: PUBLIC.supabaseUrl, supabaseAnonKey: PUBLIC.supabaseAnonKey, contactEmail: PUBLIC.contactEmail })};</script>
   ${extraHead}
   ${(Array.isArray(jsonld) ? jsonld : [jsonld]).map((obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`).join("\n")}
@@ -398,7 +402,7 @@ SITE.cities.forEach((c) => {
     description: `${c.zh}（${c.en}）家庭周末去处。${c.blurb} Family outings in ${c.en}: ${en.blurb}`,
     url: `${SITE_URL}/city/${c.id}/`,
     nav: "home",
-    jsonld: { "@context": "https://schema.org", "@type": "TouristDestination", name: `${c.zh} ${c.en}`, description: `${c.blurb} ${en.blurb}`, url: `${SITE_URL}/city/${c.id}/` },
+    jsonld: { "@context": "https://schema.org", "@type": "TouristDestination", name: `${c.zh} ${c.en}`, description: `${c.blurb} ${en.blurb}`, url: `${SITE_URL}/city/${c.id}/`, inLanguage: ["zh-CN", "en-CA"] },
     main: cityMain(c)
   }));
 });
@@ -470,6 +474,7 @@ write("saved/index.html", page({
   description: "保存在这台浏览器里的想去清单。Places you saved in this browser.",
   url: SITE_URL + "/saved/",
   nav: "saved",
+  robots: "noindex, follow",
   jsonld: { "@context": "https://schema.org", "@type": "WebPage", name: "想去 Saved places", url: SITE_URL + "/saved/" },
   main: `<section class="section"><div class="wrap"><div class="section-head"><div><h1>想去 Saved</h1><p lang="zh-CN">保存在这台浏览器里，不会上传。</p><p class="alt-lang" lang="en">Kept in this browser only. Nothing is uploaded.</p></div></div><div class="grid" id="saved-grid"></div><div class="empty" id="saved-empty"><h2>还没有收藏 Nothing saved yet</h2><p lang="zh-CN">在地点上点「想去」，留给下个放晴的周六。</p><p class="alt-lang" lang="en">Tap Save on a place and keep it for the next clear Saturday.</p></div></div></section>`
 }));
@@ -529,6 +534,7 @@ write("activities/view/index.html", page({
   description: "查看一次结伴活动的时间、地点、参加者和群聊状态。Activity time, place, participants, and chat status.",
   url: SITE_URL + "/activities/view/",
   nav: "activities",
+  robots: "noindex, follow",
   extraFoot: communityFoot,
   jsonld: { "@context": "https://schema.org", "@type": "WebPage", name: "结伴活动 Activity", url: SITE_URL + "/activities/view/" },
   main: `<section class="section"><div class="wrap" id="activity-root"></div></section>`
@@ -538,6 +544,7 @@ write("account/index.html", page({
   description: "注册或登录山海周末。浏览地点不需要账户。Create or sign in to an account. Browsing places does not require one.",
   url: SITE_URL + "/account/",
   nav: "activities",
+  robots: "noindex, follow",
   extraFoot: communityFoot,
   jsonld: { "@context": "https://schema.org", "@type": "WebPage", name: "账户 Account", url: SITE_URL + "/account/" },
   main: `<section class="section"><div class="wrap"><h1>账户 Account</h1><div id="account-root"></div></div></section>`
@@ -600,8 +607,10 @@ write("guidelines/index.html", page({
     <p lang="zh-CN">结伴是为了一起去公共的公园、馆和海滩。请对孩子和其他家庭保持尊重。</p>
     <p lang="en">Activities are for visiting public parks, museums, and beaches together. Be respectful to children and other families.</p>
     <ul>
-      <li lang="zh-CN">在公共场所见面，并自己决定是否前往。</li>
-      <li lang="en">Meet in public and decide for yourself whether to go.</li>
+      <li lang="zh-CN">在公共场所见面，并自己决定是否前往。不要把集合点改到私人住宅。</li>
+      <li lang="en">Meet in public and decide for yourself whether to go. Do not move the meeting to a private home.</li>
+      <li lang="zh-CN">孩子由自己的监护人负责。不要单独约未成年人。</li>
+      <li lang="en">A child's own guardian is responsible for them. Do not arrange to meet a minor alone.</li>
       <li lang="zh-CN">不要在群聊里公布别人的电话、邮箱或住址。自己的联系方式也只在你愿意时才发。</li>
       <li lang="en">Do not post another person's phone number, email, or home address. Share your own only if you choose to.</li>
       <li lang="zh-CN">禁止骚扰、仇恨、诈骗，以及任何涉及未成年人的性内容。</li>
@@ -613,7 +622,7 @@ write("guidelines/index.html", page({
   </article></section>`
 }));
 
-const urls = ["/", "/map/", "/routes/", "/rain/", "/activities/", "/activities/view/", "/account/", "/privacy/", "/terms/", "/guidelines/"];
+const urls = ["/", "/map/", "/routes/", "/rain/", "/activities/", "/privacy/", "/terms/", "/guidelines/"];
 SITE.cities.forEach((c) => urls.push(`/city/${c.id}/`));
 SITE.places.forEach((p) => urls.push(`/place/${p.id}/`));
 SITE.routes.forEach((r) => urls.push(`/route/${r.id}/`));

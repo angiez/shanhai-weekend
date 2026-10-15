@@ -135,7 +135,10 @@ begin
   if new.user_id is distinct from auth.uid() then
     raise exception 'registration must belong to the signed-in user';
   end if;
-  select capacity, status into cap, st from public.activities where id = new.activity_id;
+  select capacity, status into cap, st
+  from public.activities
+  where id = new.activity_id
+  for update;
   if st is distinct from 'open' then
     raise exception 'activity is not open';
   end if;
@@ -214,17 +217,34 @@ create policy registrations_update on public.registrations
   using (user_id = auth.uid())
   with check (user_id = auth.uid());
 
+create schema if not exists private;
+
+create or replace function private.blocked_pair(other uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.blocks
+    where (blocker_id = auth.uid() and blocked_id = other)
+       or (blocker_id = other and blocked_id = auth.uid())
+  );
+$$;
+
+revoke all on schema private from public, anon;
+grant usage on schema private to authenticated;
+revoke all on function private.blocked_pair(uuid) from public, anon;
+grant execute on function private.blocked_pair(uuid) to authenticated;
+
 drop policy if exists messages_select on public.messages;
 create policy messages_select on public.messages
   for select to authenticated
   using (
     public.chat_open(activity_id)
     and public.is_confirmed(activity_id)
-    and not exists (
-      select 1 from public.blocks b
-      where (b.blocker_id = auth.uid() and b.blocked_id = messages.user_id)
-         or (b.blocker_id = messages.user_id and b.blocked_id = auth.uid())
-    )
+    and not private.blocked_pair(messages.user_id)
   );
 
 drop policy if exists messages_insert on public.messages;
@@ -248,12 +268,37 @@ drop policy if exists reports_insert on public.reports;
 create policy reports_insert on public.reports
   for insert to authenticated with check (reporter_id = auth.uid());
 
-grant select on public.activities to anon, authenticated;
-grant insert, update on public.activities to authenticated;
-grant select, insert, update on public.registrations to authenticated;
-grant select, insert on public.messages to authenticated;
-grant select, insert on public.blocks to authenticated;
-grant insert on public.reports to authenticated;
-grant select, update on public.profiles to authenticated;
+revoke all on table public.profiles from public, anon;
+revoke all on table public.activities from public;
+revoke all on table public.registrations from public, anon;
+revoke all on table public.messages from public, anon;
+revoke all on table public.blocks from public, anon;
+revoke all on table public.reports from public, anon, authenticated;
 
-alter publication supabase_realtime add table public.messages;
+grant select, update on table public.profiles to authenticated;
+grant select on table public.activities to anon, authenticated;
+grant insert, update on table public.activities to authenticated;
+grant select, insert, update on table public.registrations to authenticated;
+grant select, insert on table public.messages to authenticated;
+grant select, insert on table public.blocks to authenticated;
+grant insert on table public.reports to authenticated;
+
+revoke all on function public.confirmed_count(uuid) from public, anon;
+revoke all on function public.is_confirmed(uuid) from public, anon;
+revoke all on function public.chat_open(uuid) from public, anon;
+revoke all on function public.handle_new_user() from public, anon, authenticated;
+revoke all on function public.guard_registration() from public, anon, authenticated;
+grant execute on function public.confirmed_count(uuid) to authenticated;
+grant execute on function public.is_confirmed(uuid) to authenticated;
+grant execute on function public.chat_open(uuid) to authenticated;
+
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    begin
+      alter publication supabase_realtime add table public.messages;
+    exception
+      when duplicate_object then null;
+    end;
+  end if;
+end $$;

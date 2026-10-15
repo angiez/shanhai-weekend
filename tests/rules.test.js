@@ -52,11 +52,25 @@ test("capacity and cancellation stop new registrations", function () {
   assert.equal(rules.canReadChat(cancelled, full, "a", []), false);
 });
 
-test("a block stops chat for the blocked relationship", function () {
+test("a block hides that person's messages and leaves the rest of the room", function () {
+  const rows = [
+    { userId: "a", status: "confirmed" },
+    { userId: "b", status: "confirmed" },
+    { userId: "c", status: "confirmed" }
+  ];
+  const blocks = [{ blockerId: "a", blockedId: "b" }];
+  assert.equal(rules.canReadChat(activity, rows, "a"), true);
+  assert.equal(rules.canReadChat(activity, rows, "c"), true);
+  assert.equal(rules.hiddenByBlock("b", "a", blocks), true);
+  assert.equal(rules.hiddenByBlock("a", "b", blocks), true);
+  assert.equal(rules.hiddenByBlock("c", "a", blocks), false);
+});
+
+test("someone who never joined cannot read a full activity", function () {
   const rows = [
     { userId: "a", status: "confirmed" },
     { userId: "b", status: "confirmed" }
   ];
-  assert.equal(rules.canReadChat(activity, rows, "a", [{ blockerId: "a", blockedId: "b" }]), false);
-  assert.equal(rules.canReadChat(activity, rows, "b", [{ blockerId: "a", blockedId: "b" }]), false);
+  assert.equal(rules.canReadChat(activity, rows, "outsider"), false);
+  assert.equal(rules.canPost(activity, rows, "outsider"), false);
 });

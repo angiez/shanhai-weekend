@@ -151,7 +151,8 @@ function createForm(user) {
     '<label>标题 Title<input name="title" required maxlength="80"></label>',
     '<label>地点 Place<select name="place" required></select></label>',
     '<label>时间 When<input name="when" type="datetime-local" required></label>',
-    '<label>集合点 Meeting point<input name="meet" required maxlength="160"></label>',
+    '<label>集合点 Meeting point<input name="meet" required maxlength="160" placeholder="公共场所，例如停车场入口"></label>',
+    '<p class="meta">请写公共场所。不要写家庭住址或电话。Use a public place. Do not enter a home address or phone number.</p>',
     '<label>人数上限 Capacity<input name="capacity" type="number" min="2" max="12" value="6" required></label>',
     '<button class="btn sea" type="submit">发布 Publish</button>',
     '<p id="create-msg"></p>'
@@ -189,10 +190,20 @@ function createForm(user) {
   return form;
 }
 
+let liveChannel = null;
+
+async function closeChannel() {
+  if (!liveChannel) return;
+  const current = liveChannel;
+  liveChannel = null;
+  try { await (await db()).removeChannel(current); } catch (err) { /* already closed */ }
+}
+
 async function renderActivity(root) {
+  await closeChannel();
   root.replaceChildren();
-  const id = new URLSearchParams(location.search).get("id");
-  if (!id) {
+  const id = new URLSearchParams(location.search).get("id") || "";
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
     root.append(el("p", "", "缺少活动编号。Missing activity."));
     return;
   }
@@ -220,7 +231,10 @@ async function renderActivity(root) {
   peopleBox.append(el("p", "meta", (people || []).length + " / " + activity.capacity));
   root.append(peopleBox);
   if (activity.status === "cancelled") root.append(el("div", "note", "这次活动已取消。This activity was cancelled."));
-  const decision = rules.canRegister(activity, registrations, user && user.id);
+  const visible = registrations.slice();
+  const seen = visible.filter(function (row) { return row.status === "confirmed"; }).length;
+  for (let i = seen; i < (people || []).length; i += 1) visible.push({ userId: "hidden-" + i, status: "confirmed" });
+  const decision = rules.canRegister(activity, visible, user && user.id);
   if (!user) root.append(accountLinks());
   else if (decision.ok) {
     const join = el("button", "btn sea", "我参加 Join");
@@ -253,21 +267,27 @@ async function renderActivity(root) {
   }
   const chat = el("section", "panel");
   chat.append(el("h2", "", "群聊 Chat"));
-  if (!rules.chatUnlocked(registrations) || activity.status !== "open") {
+  chat.append(el("p", "meta", "在公共场所见面。不要在这里留下电话、家庭住址，也不要单独约未成年人。Meet in public. Do not leave a phone number or home address, and do not arrange to meet a minor alone."));
+  const joined = registrations.some(function (row) { return user && row.userId === user.id && row.status === "confirmed"; });
+  if (activity.status !== "open" || (people || []).length < 2) {
     chat.append(el("p", "", "还在等另一位参加者。Waiting for another participant."));
-  } else if (!user || !rules.canReadChat(activity, registrations, user.id, [])) {
+  } else if (!joined) {
     chat.append(el("p", "", "只有已报名的参加者可以进入群聊。Only registered participants can read the chat."));
   } else {
+    const { data: blockRows } = await (await db()).from("blocks").select("blocker_id,blocked_id").eq("blocker_id", user.id);
+    const blocks = (blockRows || []).map(function (row) { return { blockerId: row.blocker_id, blockedId: row.blocked_id }; });
     const log = el("div", "stack");
     log.id = "chat-log";
     const form = el("form", "stack");
     form.innerHTML = '<label>消息 Message<textarea name="body" required maxlength="1000"></textarea></label><button class="btn sea" type="submit">发送 Send</button>';
     form.addEventListener("submit", async function (event) {
       event.preventDefault();
-      const body = new FormData(form).get("body");
+      const body = String(new FormData(form).get("body") || "").trim();
+      if (!body) return;
       const { error: postError } = await (await db()).from("messages").insert({ activity_id: id, user_id: user.id, body: body });
       if (postError) log.append(el("p", "note", postError.message));
       else form.reset();
+      if (window.Notification && Notification.permission === "default") Notification.requestPermission();
     });
     const report = el("button", "btn ghost", "举报 Report");
     report.type = "button";
@@ -279,20 +299,25 @@ async function renderActivity(root) {
     });
     chat.append(log, form, report);
     const { data: messages } = await (await db()).from("messages").select("id,user_id,body,created_at").eq("activity_id", id).order("created_at");
-    (messages || []).forEach(function (message) { appendMessage(log, message, user.id); });
-    await (await db()).channel("activity-" + id).on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "activity_id=eq." + id }, function (payload) {
-      appendMessage(log, payload.new, user.id);
+    (messages || []).forEach(function (message) {
+      if (!rules.hiddenByBlock(message.user_id, user.id, blocks)) appendMessage(log, message, user.id, blocks);
+    });
+    liveChannel = (await db()).channel("activity-" + id);
+    liveChannel.on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "activity_id=eq." + id }, function (payload) {
+      if (!payload.new || payload.new.activity_id !== id) return;
+      if (rules.hiddenByBlock(payload.new.user_id, user.id, blocks)) return;
+      appendMessage(log, payload.new, user.id, blocks);
       if (payload.new.user_id !== user.id && document.hidden && window.Notification && Notification.permission === "granted") {
         new Notification("山海周末", { body: "结伴群里有一条新消息。A new activity message." });
       }
     }).subscribe();
-    if (window.Notification && Notification.permission === "default") Notification.requestPermission();
   }
   root.append(chat);
 }
 
-function appendMessage(log, message, myId) {
+function appendMessage(log, message, myId, blocks) {
   const row = el("p", "");
+  row.dataset.author = message.user_id;
   row.append(el("strong", "", message.user_id === myId ? "我 Me" : "参加者"));
   row.append(document.createTextNode(" " + message.body));
   const block = el("button", "btn small ghost", "屏蔽 Block");
@@ -300,7 +325,10 @@ function appendMessage(log, message, myId) {
   if (message.user_id !== myId) {
     block.addEventListener("click", async function () {
       await (await db()).from("blocks").insert({ blocker_id: myId, blocked_id: message.user_id });
-      row.remove();
+      blocks.push({ blockerId: myId, blockedId: message.user_id });
+      log.querySelectorAll("[data-author]").forEach(function (item) {
+        if (item.dataset.author === message.user_id) item.remove();
+      });
     });
     row.append(document.createTextNode(" "), block);
   }

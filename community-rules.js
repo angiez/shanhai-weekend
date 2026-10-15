@@ -24,20 +24,22 @@
     return { ok: true, reason: "ok" };
   }
 
-  function canReadChat(activity, registrations, userId, blocks) {
+  function canReadChat(activity, registrations, userId) {
     if (!activity || activity.status !== "open") return false;
     if (!chatUnlocked(registrations)) return false;
-    if (!confirmed(registrations).some(function (row) { return row.userId === userId; })) return false;
-    const banned = (blocks || []).some(function (block) {
-      return (block.blockerId === userId && confirmed(registrations).some(function (row) { return row.userId === block.blockedId; }))
-        || (block.blockedId === userId);
+    return confirmed(registrations).some(function (row) { return row.userId === userId; });
+  }
+
+  function hiddenByBlock(authorId, userId, blocks) {
+    return (blocks || []).some(function (block) {
+      return (block.blockerId === userId && block.blockedId === authorId)
+        || (block.blockerId === authorId && block.blockedId === userId);
     });
-    return !banned;
   }
 
-  function canPost(activity, registrations, userId, blocks) {
-    return canReadChat(activity, registrations, userId, blocks);
+  function canPost(activity, registrations, userId) {
+    return canReadChat(activity, registrations, userId);
   }
 
-  return { confirmed: confirmed, chatUnlocked: chatUnlocked, canRegister: canRegister, canReadChat: canReadChat, canPost: canPost };
+  return { confirmed: confirmed, chatUnlocked: chatUnlocked, canRegister: canRegister, canReadChat: canReadChat, canPost: canPost, hiddenByBlock: hiddenByBlock };
 });
